@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visor WebGIS — Unidades de Postgrado UAGRM (INF442-SA)</title>
+  <meta name="description" content="Sistema de Información Geográfica Web para la localización, consulta QR y ruteo hacia las 19 Unidades de Postgrado y servicios de seguridad de la UAGRM.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f2b5b'/%3E%3Cpath d='M16 5c-4.4 0-8 3.6-8 8 0 5.6 8 14 8 14s8-8.4 8-14c0-4.4-3.6-8-8-8z' fill='%238b1538' stroke='%23d4af37' stroke-width='2'/%3E%3Ccircle cx='16' cy='13' r='3' fill='%23ffffff'/%3E%3C/svg%3E">
+
+  <!-- Leaflet.js CSS (CDN) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <!-- Leaflet Routing Machine CSS (CDN) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" crossorigin="">
+  <!-- Estilos propios del proyecto -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link visually-hidden">Saltar al visor de mapa</a>
+
+  <!-- Barra superior de navegación -->
+  <header id="app-header" class="topbar">
+    <div class="topbar__left">
+      <button
+        id="drawer-open-btn"
+        type="button"
+        class="btn btn--ghost topbar__menu-btn"
+        aria-label="Abrir panel de búsqueda y filtros"
+        aria-expanded="false"
+        aria-controls="sidebar-drawer"
+      >
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <div class="brand">
+        <div class="brand__emblem" aria-hidden="true">SIG</div>
+        <div class="brand__text">
+          <h1 class="brand__title">Postgrados UAGRM</h1>
+          <p class="brand__subtitle">Visor WebGIS · INF442-SA</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="topbar__actions">
+      <button
+        id="toggle-services-btn"
+        type="button"
+        class="btn btn--pill"
+        aria-pressed="true"
+      >
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <span>Servicios</span>
+      </button>
+
+      <button
+        id="open-table-btn"
+        type="button"
+        class="btn btn--secondary"
+      >
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="16" rx="2"/>
+          <path d="M3 10h18M9 4v16"/>
+        </svg>
+        <span class="hide-xs">Tabla de Infraestructura</span>
+        <span class="show-xs">Tabla</span>
+      </button>
+
+      <button
+        id="open-qr-scanner-btn"
+        type="button"
+        class="btn btn--primary"
+      >
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/>
+          <rect x="7" y="7" width="4" height="4"/>
+          <rect x="13" y="7" width="4" height="4"/>
+          <rect x="7" y="13" width="4" height="4"/>
+          <path d="M14 14h3v3h-3z"/>
+        </svg>
+        <span>Escanear QR</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Banner no bloqueante para Cold Start de Render -->
+  <div id="connection-banner" class="connection-banner" role="status" aria-live="polite" hidden>
+    <div id="connection-spinner" class="spinner" aria-hidden="true"></div>
+    <div class="connection-banner__copy">
+      <strong id="connection-banner-text">Conectando con el servidor SIG en Render...</strong>
+      <span id="connection-banner-subtext">Cargando capas geográficas desde Supabase PostGIS...</span>
+    </div>
+    <div class="connection-banner__actions">
+      <button id="connection-retry-btn" type="button" class="btn btn--sm btn--primary" hidden>Reintentar</button>
+      <button id="connection-dismiss-btn" type="button" class="btn btn--sm btn--ghost" aria-label="Ocultar aviso" hidden>✕</button>
+    </div>
+  </div>
+
+  <!-- Aviso flotante (toast) para alertas breves -->
+  <div id="app-toast" class="app-toast" role="status" aria-live="polite" hidden></div>
+
+  <!-- Contenedor principal de la aplicación WebGIS -->
+  <div class="app-shell">
+    <!-- Panel lateral izquierdo (Sidebar en PC / Drawer deslizable en móvil) -->
+    <aside id="sidebar-drawer" class="Drawer" aria-label="Panel de búsqueda y filtros">
+      <div class="Drawer-scroller">
+        <div class="Drawer-sheet">
+          <div class="drawer-header">
+            <h2 class="drawer-header__title">Explorar Unidades</h2>
+            <button
+              id="drawer-close-btn"
+              type="button"
+              class="btn btn--icon drawer-header__close"
+              aria-label="Cerrar panel de búsqueda"
+            >
+              ✕
+            </button>
+          </div>
+
+          <!-- Contadores rápidos desde GET /api/resumen -->
+          <section class="stats-grid" aria-label="Resumen de infraestructura">
+            <div class="stat-card">
+              <span id="stat-total" class="stat-card__value">—</span>
+              <span class="stat-card__label">Total Unidades</span>
+            </div>
+            <div class="stat-card">
+              <span id="stat-urbanos" class="stat-card__value">—</span>
+              <span class="stat-card__label">Urbanos</span>
+            </div>
+            <div class="stat-card">
+              <span id="stat-provinciales" class="stat-card__value">—</span>
+              <span class="stat-card__label">Provinciales</span>
+            </div>
+            <div class="stat-card">
+              <span id="stat-servicios" class="stat-card__value">—</span>
+              <span class="stat-card__label">Serv. Apoyo</span>
+            </div>
+          </section>
+
+          <!-- Buscador y Filtros -->
+          <section class="filters-box" aria-label="Filtros de búsqueda">
+            <div class="field">
+              <label for="filter-search" class="field__label">Buscar facultad, sigla, unidad o dirección</label>
+              <input
+                id="filter-search"
+                type="search"
+                class="field__input"
+                placeholder="Ej. FICCT, Business, Av. Busch..."
+                autocomplete="off"
+              >
+            </div>
+
+            <div class="filters-row">
+              <div class="field">
+                <label for="filter-ambito" class="field__label">Ámbito</label>
+                <select id="filter-ambito" class="field__select">
+                  <option value="Urbano" selected>Urbano (13)</option>
+                  <option value="Todos">Todos (19)</option>
+                  <option value="Provincial">Provincial (6)</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="filter-campus" class="field__label">Campus / Zona</label>
+                <select id="filter-campus" class="field__select">
+                  <option value="Todos">Todos</option>
+                  <option value="Ciudad Universitaria">Ciudad Universitaria</option>
+                  <option value="Campus Universitario">Campus Universitario</option>
+                  <option value="Zona Central">Zona Central</option>
+                  <option value="Externo">Externo</option>
+                  <option value="Sede Provincial">Sede Provincial</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="filters-footer">
+              <span id="results-count" class="results-count">Cargando...</span>
+              <button id="clear-filters-btn" type="button" class="btn-link">Restablecer</button>
+            </div>
+          </section>
+
+          <!-- Lista sincronizada de resultados -->
+          <ul id="results-list" class="results-list" aria-label="Unidades de Postgrado filtradas"></ul>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Lienzo del Mapa + Controles Flotantes + Ficha/Ruteo -->
+    <main id="main-content" class="map-stage" tabindex="-1">
+      <div id="map" class="map-canvas" role="application" aria-label="Mapa interactivo de Unidades de Postgrado UAGRM"></div>
+
+      <!-- Aviso de modo selección de origen en el mapa -->
+      <div id="map-pick-hint" class="map-pick-hint" hidden>
+        Hacé clic en cualquier punto del mapa para fijar tu punto de inicio
+      </div>
+
+      <!-- Botón flotante para centrar el mapa en la zona universitaria -->
+      <button
+        id="center-map-btn"
+        type="button"
+        class="map-recenter-btn"
+        aria-label="Centrar mapa en Zona Universitaria"
+      >
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+          <circle cx="12" cy="12" r="7"/>
+        </svg>
+        <span>Zona Univ.</span>
+      </button>
+
+      <!-- Leyenda plegable del mapa -->
+      <section id="map-legend" class="map-legend" aria-label="Leyenda cartográfica">
+        <button
+          id="legend-toggle-btn"
+          type="button"
+          class="map-legend__toggle"
+          aria-expanded="true"
+          aria-controls="legend-body"
+        >
+          <span>Leyenda SIG</span>
+          <svg class="map-legend__chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </button>
+
+        <div id="legend-body" class="map-legend__body">
+          <div class="legend-group">
+            <h2 class="legend-group__title">Unidades de Postgrado</h2>
+            <ul class="legend-list">
+              <li><span class="legend-swatch legend-swatch--dgp" aria-hidden="true"></span>Rectorado / DGP</li>
+              <li><span class="legend-swatch legend-swatch--fac" aria-hidden="true"></span>Unidad Facultativa</li>
+              <li><span class="legend-swatch legend-swatch--prov" aria-hidden="true"></span>Sede Provincial</li>
+            </ul>
+          </div>
+          <div class="legend-group">
+            <h2 class="legend-group__title">Servicios de Apoyo (#22)</h2>
+            <ul class="legend-list">
+              <li><span class="legend-dot legend-dot--med" aria-hidden="true">+</span>Centro Médico</li>
+              <li><span class="legend-dot legend-dot--ext" aria-hidden="true">●</span>Extintor</li>
+              <li><span class="legend-dot legend-dot--acc" aria-hidden="true">▸</span>Acceso Campus</li>
+              <li><span class="legend-dot legend-dot--enc" aria-hidden="true">✦</span>Punto Encuentro</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panel derecho / hoja inferior de Ficha Alfanumérica y Ruteo -->
+      <aside id="detail-panel" class="detail-panel" aria-label="Ficha de unidad y cálculo de ruta" hidden>
+        <div class="detail-panel__header">
+          <div class="detail-tabs" role="tablist" aria-label="Opciones de la unidad">
+            <button
+              id="tab-btn-ficha"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              aria-controls="panel-ficha"
+              class="detail-tab detail-tab--active"
+            >
+              Ficha Técnica
+            </button>
+            <button
+              id="tab-btn-ruta"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-ruta"
+              class="detail-tab"
+            >
+              Cómo llegar (#22)
+            </button>
+          </div>
+          <button
+            id="detail-close-btn"
+            type="button"
+            class="btn btn--icon"
+            aria-label="Cerrar ficha de unidad"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div class="detail-panel__scroll">
+          <!-- TAB 1: Ficha Alfanumérica (Requisito #21) -->
+          <div id="panel-ficha" role="tabpanel" aria-labelledby="tab-btn-ficha">
+            <figure class="detail-figure">
+              <img
+                id="detail-photo"
+                src="assets/placeholder.svg"
+                alt="Fachada de Unidad de Postgrado"
+                class="detail-figure__img"
+              >
+            </figure>
+
+            <div class="detail-badges">
+              <span id="detail-id" class="id-pill">PG-00</span>
+              <span id="detail-sigla" class="unit-badge">DGP</span>
+              <span id="detail-tipo" class="type-pill">Unidad</span>
+              <span id="detail-geo" class="geo-pill">Verificado</span>
+            </div>
+
+            <h2 id="detail-title" class="detail-title">Unidad de Postgrado</h2>
+            <p id="detail-faculty" class="detail-faculty">Facultad</p>
+
+            <!-- Botones de acción rápida -->
+            <div class="quick-actions">
+              <button id="action-route" type="button" class="btn btn--primary btn--sm">
+                Cómo llegar
+              </button>
+              <button id="action-qr" type="button" class="btn btn--secondary btn--sm">
+                Ver / Descargar QR
+              </button>
+              <a id="action-call" href="#" class="btn btn--outline btn--sm">Llamar</a>
+              <a id="action-whatsapp" href="#" target="_blank" rel="noopener noreferrer" class="btn btn--whatsapp btn--sm">WhatsApp</a>
+              <a id="action-email" href="#" class="btn btn--outline btn--sm">Correo</a>
+              <a id="action-web" href="#" target="_blank" rel="noopener noreferrer" class="btn btn--outline btn--sm">Sitio Web</a>
+            </div>
+
+            <dl class="meta-list">
+              <div class="meta-list__row">
+                <dt>Campus / Ámbito</dt>
+                <dd id="meta-campus">—</dd>
+              </div>
+              <div class="meta-list__row">
+                <dt>Módulo / Pabellón</dt>
+                <dd id="meta-modulo">—</dd>
+              </div>
+              <div class="meta-list__row">
+                <dt>Dirección</dt>
+                <dd id="meta-direccion">—</dd>
+              </div>
+              <div class="meta-list__row">
+                <dt>Programas</dt>
+                <dd id="meta-programas">—</dd>
+              </div>
+              <div class="meta-list__row">
+                <dt>Horario</dt>
+                <dd id="meta-horario">—</dd>
+              </div>
+              <div class="meta-list__row">
+                <dt>Teléfono</dt>
+                <dd id="meta-telefono">—</dd>
+              </div>
+              <div class="meta-list__row">
+                <dt>Correo</dt>
+                <dd id="meta-correo">—</dd>
+              </div>
+              <div class="meta-list__row">
+                <dt>Superficie</dt>
+                <dd id="meta-area">—</dd>
+              </div>
+              <div class="meta-list__row">
+                <dt>Distancia a vía</dt>
+                <dd id="meta-dist-via">—</dd>
+              </div>
+              <div class="meta-list__row">
+                <dt>Coordenadas WGS84</dt>
+                <dd id="meta-coords">—</dd>
+              </div>
+              <div class="meta-list__row">
+                <dt>Código QR</dt>
+                <dd id="meta-qr" class="mono">—</dd>
+              </div>
+            </dl>
+          </div>
+
+          <!-- TAB 2: Navegación / Ruteo + Servicios Cercanos PostGIS (#22) -->
+          <div id="panel-ruta" role="tabpanel" aria-labelledby="tab-btn-ruta" hidden>
+            <div class="route-dest-card">
+              <span class="route-dest-card__eyebrow">Destino navegable</span>
+              <strong id="route-dest-label" class="route-dest-card__name">—</strong>
+              <span id="route-dest-coords" class="route-dest-card__coords">—</span>
+            </div>
+
+            <div class="route-section">
+              <h3 class="route-section__title">1. Elegí tu punto de inicio</h3>
+              <div class="route-origin-buttons">
+                <button id="route-gps-btn" type="button" class="btn btn--outline btn--sm">
+                  Mi ubicación GPS
+                </button>
+                <button id="route-pick-btn" type="button" class="btn btn--outline btn--sm">
+                  Elegir en el mapa
+                </button>
+              </div>
+
+              <div class="field">
+                <label for="route-quick-origin" class="field__label">O elegí un punto de inicio rápido</label>
+                <select id="route-quick-origin" class="field__select">
+                  <option value="">-- Seleccionar acceso o referencia --</option>
+                </select>
+              </div>
+
+              <p id="route-origin-status" class="route-origin-status">
+                Sin origen seleccionado. Elegí GPS, mapa o un acceso rápido.
+              </p>
+            </div>
+
+            <fieldset class="route-section route-modes">
+              <legend class="route-section__title">2. Modo de desplazamiento</legend>
+              <label class="mode-option">
+                <input type="radio" name="route-mode" value="foot" checked>
+                <span>A pie</span>
+              </label>
+              <label class="mode-option">
+                <input type="radio" name="route-mode" value="driving">
+                <span>En vehículo</span>
+              </label>
+            </fieldset>
+
+            <div class="route-actions">
+              <button id="route-calc-btn" type="button" class="btn btn--primary" disabled>
+                Trazar ruta
+              </button>
+              <button id="route-clear-btn" type="button" class="btn btn--outline">
+                Limpiar ruta
+              </button>
+            </div>
+
+            <p id="route-feedback" class="route-feedback" role="status" hidden></p>
+
+            <div id="route-summary" class="route-summary" hidden>
+              <div class="route-summary__item">
+                <span>Distancia total</span>
+                <strong id="route-distance-val">—</strong>
+              </div>
+              <div class="route-summary__item">
+                <span>Tiempo estimado</span>
+                <strong id="route-duration-val">—</strong>
+              </div>
+              <span id="route-mode-tag" class="route-summary__tag">A pie</span>
+            </div>
+
+            <!-- Servicios de apoyo cercanos desde PostGIS -->
+            <div id="route-nearby-box" class="nearby-box" hidden>
+              <div class="nearby-box__header">
+                <h3 class="route-section__title">Servicios de apoyo cercanos (PostGIS ≤ 600 m)</h3>
+                <span id="route-nearby-count" class="nearby-count">0</span>
+              </div>
+              <ul id="route-nearby-list" class="nearby-list"></ul>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- MODAL 1: Tabla de Infraestructura (Producto Final del Proyecto) -->
+  <dialog id="table-dialog" class="modal-dialog modal-dialog--wide" closedby="any" aria-labelledby="table-dialog-title">
+    <div class="modal-header">
+      <div>
+        <h1 id="table-dialog-title" class="modal-header__title">Tabla de Infraestructura — Unidades de Postgrado</h1>
+        <p class="modal-header__sub">Hacé clic en cualquier fila para ubicar la unidad en el mapa y abrir su ficha.</p>
+      </div>
+      <form method="dialog">
+        <button type="submit" class="btn btn--icon" aria-label="Cerrar tabla de infraestructura" autofocus>✕</button>
+      </form>
+    </div>
+
+    <div class="table-toolbar">
+      <div class="table-toolbar__search">
+        <label for="table-search-input" class="visually-hidden">Filtrar tabla de infraestructura</label>
+        <input
+          id="table-search-input"
+          type="search"
+          class="field__input"
+          placeholder="Filtrar filas visibles (sigla, campus, módulo, dirección)..."
+        >
+      </div>
+      <div class="table-toolbar__actions">
+        <span id="table-visible-count" class="table-count-pill">0 registros</span>
+        <button id="export-csv-btn" type="button" class="btn btn--primary btn--sm">
+          Exportar vista CSV
+        </button>
+      </div>
+    </div>
+
+    <div id="table-sort-status" class="visually-hidden" role="status"></div>
+
+    <div tabindex="0" role="region" aria-labelledby="infra-table-caption" class="table-wrapper">
+      <table id="infra-table" class="infra-table">
+        <caption id="infra-table-caption" class="visually-hidden">
+          Directorio de unidades de postgrado UAGRM con datos espaciales, contacto y códigos QR
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col" data-type="text"><button type="button" commandfor="infra-table" command="--sort">ID<span class="sort-icon" aria-hidden="true"></span></button></th>
+            <th scope="col" data-type="text"><button type="button" commandfor="infra-table" command="--sort">Sigla<span class="sort-icon" aria-hidden="true"></span></button></th>
+            <th scope="col" data-type="text"><button type="button" commandfor="infra-table" command="--sort">Unidad<span class="sort-icon" aria-hidden="true"></span></button></th>
+            <th scope="col" data-type="text"><button type="button" commandfor="infra-table" command="--sort">Campus<span class="sort-icon" aria-hidden="true"></span></button></th>
+            <th scope="col" data-type="text"><button type="button" commandfor="infra-table" command="--sort">Módulo<span class="sort-icon" aria-hidden="true"></span></button></th>
+            <th scope="col" data-type="text"><button type="button" commandfor="infra-table" command="--sort">Dirección<span class="sort-icon" aria-hidden="true"></span></button></th>
+            <th scope="col" data-type="text">Teléfono</th>
+            <th scope="col" data-type="number"><button type="button" commandfor="infra-table" command="--sort">Superficie m²<span class="sort-icon" aria-hidden="true"></span></button></th>
+            <th scope="col" data-type="text"><button type="button" commandfor="infra-table" command="--sort">Estado<span class="sort-icon" aria-hidden="true"></span></button></th>
+            <th scope="col" data-type="text"><button type="button" commandfor="infra-table" command="--sort">Código QR<span class="sort-icon" aria-hidden="true"></span></button></th>
+          </tr>
+        </thead>
+        <tbody id="infra-tbody"></tbody>
+      </table>
+    </div>
+  </dialog>
+
+  <!-- MODAL 2: Generador / Descarga de QR Imprimible (Requisito #21) -->
+  <dialog id="qr-dialog" class="modal-dialog modal-dialog--compact" closedby="any" aria-labelledby="qr-dialog-title">
+    <div class="modal-header">
+      <h1 id="qr-dialog-title" class="modal-header__title">Código QR de la Unidad</h1>
+      <form method="dialog">
+        <button type="submit" class="btn btn--icon" aria-label="Cerrar generador QR" autofocus>✕</button>
+      </form>
+    </div>
+
+    <div class="qr-modal-body">
+      <p id="qr-dialog-unit" class="qr-modal-unit">—</p>
+      <div id="qr-canvas-container" class="qr-canvas-box"></div>
+      <p class="qr-modal-code">Código: <strong id="qr-dialog-code" class="mono">—</strong></p>
+      <p id="qr-dialog-url" class="qr-modal-url mono"></p>
+      <div class="qr-modal-actions">
+        <button id="qr-download-btn" type="button" class="btn btn--primary">
+          Descargar PNG
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL 3: Escáner QR con Cámara Móvil (Requisito #21) -->
+  <dialog id="scanner-dialog" class="modal-dialog modal-dialog--compact" closedby="any" aria-labelledby="scanner-dialog-title">
+    <div class="modal-header">
+      <h1 id="scanner-dialog-title" class="modal-header__title">Escanear Código QR</h1>
+      <form method="dialog">
+        <button type="submit" class="btn btn--icon" aria-label="Cerrar escáner QR" autofocus>✕</button>
+      </form>
+    </div>
+
+    <div class="scanner-body">
+      <div id="qr-reader-region" class="qr-reader-region"></div>
+      <p id="qr-scanner-status" class="scanner-status" role="status">
+        Preparando cámara trasera...
+      </p>
+
+      <div class="scanner-fallbacks">
+        <label class="btn btn--outline btn--sm scanner-file-label" for="qr-file-input">
+          Subir imagen con QR
+        </label>
+        <input id="qr-file-input" type="file" accept="image/*" class="visually-hidden">
+
+        <form id="qr-manual-form" class="scanner-manual-form">
+          <label for="qr-manual-input" class="field__label">O ingresar código directo (ej. UAGRM-PG-FICCT)</label>
+          <div class="scanner-manual-row">
+            <input
+              id="qr-manual-input"
+              type="text"
+              class="field__input"
+              placeholder="UAGRM-PG-FICCT"
+              autocomplete="off"
+            >
+            <button type="submit" class="btn btn--secondary btn--sm">Buscar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Librerías por CDN (zero-build) -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js" crossorigin=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" crossorigin=""></script>
+
+  <!-- Controlador principal ES Module -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

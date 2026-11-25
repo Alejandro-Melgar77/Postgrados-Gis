@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-labelledby="placeholder-title placeholder-desc">
+  <title id="placeholder-title">Fachada referencial de Unidad de Postgrado UAGRM</title>
+  <desc id="placeholder-desc">Imagen ilustrativa por defecto cuando la fotografía real de la unidad aún no ha sido cargada.</desc>
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f2b5b" />
+      <stop offset="60%" stop-color="#1a4384" />
+      <stop offset="100%" stop-color="#8b1538" />
+    </linearGradient>
+    <pattern id="gridPattern" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+    </pattern>
+  </defs>
+
+  <rect width="640" height="400" fill="url(#bgGrad)" />
+  <rect width="640" height="400" fill="url(#gridPattern)" />
+
+  <!-- Decorative topographic rings -->
+  <circle cx="540" cy="80" r="110" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" />
+  <circle cx="540" cy="80" r="76" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" />
+  <circle cx="90" cy="340" r="90" fill="none" stroke="rgba(212,175,55,0.18)" stroke-width="1.5" />
+
+  <!-- Stylized university building -->
+  <g transform="translate(200, 92)">
+    <rect x="20" y="72" width="200" height="118" rx="6" fill="rgba(255,255,255,0.14)" stroke="rgba(255,255,255,0.38)" stroke-width="2" />
+    <polygon points="8,72 120,16 232,72" fill="rgba(212,175,55,0.28)" stroke="#f3d474" stroke-width="2" />
+    <rect x="44" y="96" width="28" height="34" rx="3" fill="rgba(255,255,255,0.25)" />
+    <rect x="106" y="96" width="28" height="34" rx="3" fill="rgba(255,255,255,0.25)" />
+    <rect x="168" y="96" width="28" height="34" rx="3" fill="rgba(255,255,255,0.25)" />
+    <rect x="96" y="144" width="48" height="46" rx="3" fill="rgba(15,43,91,0.72)" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" />
+    <circle cx="120" cy="48" r="10" fill="#f3d474" />
+  </g>
+
+  <!-- Label pill -->
+  <g transform="translate(150, 312)">
+    <rect x="0" y="0" width="340" height="44" rx="22" fill="rgba(10, 22, 46, 0.72)" stroke="rgba(255,255,255,0.24)" />
+    <text x="170" y="27" text-anchor="middle" fill="#ffffff" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="14" font-weight="600" letter-spacing="0.4">
+      FOTOGRAFÍA DE FACHADA EN PREPARACIÓN
+    </text>
+  </g>
+</svg>

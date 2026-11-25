@@ -236,6 +236,29 @@ OK (100% de pruebas en verde)
 
 ---
 
+### FASE 7: Frontend WebGIS Interactivo (Listo para Cloudflare Pages)
+
+En esta fase final se construyó la aplicación web espacial **zero-build** en la carpeta `frontend/` utilizando exclusivamente **HTML5, CSS3, JavaScript puro (ES Modules)** y librerías cargadas por **CDN**, preparada para publicarse directamente en **Cloudflare Pages** sin comando de compilación y conectada al backend **FastAPI + Supabase/PostGIS**.
+
+#### 1. Arquitectura Modular y Librerías CDN
+- **Librerías CDN:** `Leaflet.js 1.9.4`, `Leaflet Routing Machine 3.2.12`, `QRCode.js 1.0.0` y `html5-qrcode 2.3.8`.
+- **Tolerancia a Cold Start de Render ([frontend/js/config.js](frontend/js/config.js) y [frontend/js/api.js](frontend/js/api.js)):** Detección automática de entorno local (`localhost` / `127.0.0.1` -> `http://127.0.0.1:8000`) vs producción (`PRODUCTION_API_URL`), banner no bloqueante (`"Conectando con el servidor SIG en Render..."`), timeout de 60 s con `AbortController` y botón de reintento.
+- **Mapa Interactivo y Capas ([frontend/js/map.js](frontend/js/map.js)):** Centrado en la zona universitaria (`[-17.778, -63.188]`, zoom `14`), selector de mapas base gratuitos (*OpenStreetMap Estándar* y *Esri World Imagery*), marcadores SVG diferenciados para `Rectorado_DGP`, `Unidad_Facultativa` y `Sede_Provincial`, capa conmutable de servicios de apoyo (`Centro_Medico`, `Extintor`, `Acceso_Campus`, `Punto_Encuentro`) y leyenda plegable en móvil.
+- **Buscador, Paneles y Tabla de Infraestructura ([frontend/js/app.js](frontend/js/app.js)):** Contadores en vivo desde `/api/resumen`, buscador en tiempo real (`q`), filtros por ámbito (`Urbano` por defecto, `Todos`, `Provincial`) y campus, cajón lateral adaptable (*drawer* deslizable en móvil), ficha alfanumérica con respaldo automático a [frontend/assets/placeholder.svg](frontend/assets/placeholder.svg) y modal de **Tabla de Infraestructura** ordenable, filtrable y exportable a CSV UTF-8 con BOM.
+
+#### 2. Cumplimiento de Requisitos #21 y #22 en el Cliente Web
+- **Requisito #21 — Ficha Móvil y QR ([frontend/js/qr.js](frontend/js/qr.js)):** Detección automática de `?qr=CODIGO` en la URL al iniciar (`GET /api/postgrados/qr/{cod_qr}`), ajuste automático del filtro si la unidad es provincial, generador dinámico de QR imprimible con descarga PNG (tarjeta rotulada) y escáner de cámara trasera con `html5-qrcode` (más carga de imagen o ingreso manual).
+- **Requisito #22 — Ruteo OSRM y Servicios Cercanos PostGIS ([frontend/js/routing.js](frontend/js/routing.js)):** Destino sobre coordenadas navegables (`lat_ruta, lon_ruta` con fallback a `lat_wgs84, lon_wgs84`), tres modos de origen (GPS actual, clic sobre el mapa o puntos de inicio rápidos del campus), modos *A pie* y *En vehículo* vía OSRM (`https://router.project-osrm.org/route/v1/`), y consulta automática a `GET /api/servicios/cercanos` (`radio_m=600`) dibujando el radio geodésico y listando los servicios de seguridad ordenados por distancia exacta en metros.
+
+#### 3. Resultado de la Verificación Local
+- **Validación de sintaxis ES Modules (`node --check`):** 6/6 archivos JS (`config.js`, `api.js`, `map.js`, `routing.js`, `qr.js`, `app.js`) sin errores.
+- **Servidores locales temporales (`uvicorn main:app --port 8000` + `python -m http.server 5500 --directory frontend`):**
+  - Carga HTTP `200` de todos los archivos estáticos (`index.html`, `css/styles.css`, `js/*.js`, `assets/placeholder.svg`).
+  - Comunicación verificada con CORS (`Access-Control-Allow-Origin: http://127.0.0.1:5500`) en `/api/health`, `/api/resumen` (`19` postgrados, `13` urbanos, `12` servicios), `/api/postgrados`, `/api/postgrados/qr/UAGRM-PG-FICCT`, `/api/servicios` y `/api/servicios/cercanos`.
+  - **Prueba E2E en navegador real (Playwright Chromium, escritorio `1366x840` y móvil `390x844`):** 0 errores JavaScript, 0 fallos HTTP inesperados, tabla ordenable/filtrable funcional, modal QR generado en `<canvas>`, cálculo real de ruta OSRM (`715 m` / `9 min` desde Av. Busch hasta `PG-16 FICCT` con `11` servicios PostGIS cercanos, más próximo `SERV-07` a `14.5 m`), deep-link `?qr=UAGRM-PG-FICH` abriendo `PG-01` y *drawer* móvil operativo.
+
+---
+
 ## 6. INVENTARIO COMPLETO DE ARCHIVOS DEL PROYECTO (ACTUALIZADO)
 
 | Archivo / Directorio | Formato | Función Principal |
@@ -268,6 +291,16 @@ OK (100% de pruebas en verde)
 | `.gitignore` | Git | Protección de archivos sensibles y temporales. |
 | `README_ARCMAP108.md` | Markdown | Manual técnico y guía de usuario para ArcMap 10.8. |
 | `RESUMEN_IMPLEMENTACION.md` | Markdown | Bitácora ejecutiva consolidada de todo el proyecto. |
+| `frontend/index.html` | HTML5 | Interfaz WebGIS principal con Leaflet, ficha técnica, modales `<dialog>` y drawer móvil. |
+| `frontend/css/styles.css` | CSS3 | Hoja de estilos responsive (PC + móvil), leyenda plegable, ficha y tabla adaptable. |
+| `frontend/js/config.js` | JavaScript (ESM) | Archivo único de configuración para `PRODUCTION_API_URL`, centro inicial y constantes. |
+| `frontend/js/api.js` | JavaScript (ESM) | Cliente `fetch` hacia FastAPI con banner Cold Start de Render (60 s) y reintento. |
+| `frontend/js/map.js` | JavaScript (ESM) | Mapa Leaflet, mapas base OSM/Esri, marcadores SVG, leyenda y servicios de apoyo. |
+| `frontend/js/routing.js` | JavaScript (ESM) | Ruteo OSRM (GPS, clic en mapa, accesos rápidos) + consulta PostGIS de servicios cercanos. |
+| `frontend/js/qr.js` | JavaScript (ESM) | Lectura de `?qr=`, generador QR imprimible en PNG y escáner de cámara móvil. |
+| `frontend/js/app.js` | JavaScript (ESM) | Controlador principal: contadores, buscador, filtros, ficha y tabla exportable CSV. |
+| `frontend/assets/placeholder.svg` | SVG | Imagen vectorial de respaldo cuando falte la fotografía `PG-XX.jpg`. |
+| `frontend/README_FRONTEND.md` | Markdown | Guía de pruebas locales y despliegue *zero-build* en Cloudflare Pages. |
 
 ---
 
@@ -298,4 +331,16 @@ OK (100% de pruebas en verde)
    - Una vez que el estado pase a **Live**, abrir `https://[TU-APP].onrender.com/docs` (Swagger UI) y verificar `https://[TU-APP].onrender.com/api/health` (`status: ok`, `database: connected`).
 
 ---
-*Fin del resumen ejecutivo actualizado (Fases 1 a 4 ArcMap 10.8 + Fase 5 Supabase PostGIS + Fase 6 Backend API FastAPI).*
+
+## 8. CHECKLIST DE DESPLIEGUE FINAL EN PRODUCCIÓN (RENDER + CLOUDFLARE PAGES)
+
+- [ ] **1. Publicar Backend en Render:** Verificar que el Web Service con Root Directory `backend` esté en estado **Live** y que `/api/health` responda `status: ok` y `database: connected`.
+- [ ] **2. Configurar URL de Producción en el Frontend:** Editar la constante `PRODUCTION_API_URL` en [frontend/js/config.js](frontend/js/config.js) con la URL real de Render (sin `/` final).
+- [ ] **3. Subir Cambios a GitHub:** Hacer `git add frontend RESUMEN_IMPLEMENTACION.md`, `git commit` y `git push origin main`.
+- [ ] **4. Crear Proyecto en Cloudflare Pages:** Conectar el repositorio con *Framework preset:* `None`, *Build command:* vacío y *Build output directory:* `frontend`.
+- [ ] **5. Probar Deep-Link QR y GPS en Móvil (HTTPS):** Abrir `https://<tu-proyecto>.pages.dev/?qr=UAGRM-PG-FICCT`, validar carga automática de ficha, escáner de cámara y cálculo de ruta con servicios cercanos PostGIS.
+- [ ] **6. (Opcional) Endurecer CORS en Render:** Actualizar `CORS_ORIGINS` en Render con el dominio asignado por Cloudflare Pages (`https://<tu-proyecto>.pages.dev`).
+- [ ] **7. (Opcional) Cargar Fotografías Reales:** Guardar las fotos en `frontend/assets/fotos/PG-00.jpg` ... `PG-18.jpg` para reemplazar el respaldo SVG automático.
+
+---
+*Fin del resumen ejecutivo actualizado (Fases 1 a 4 ArcMap 10.8 + Fase 5 Supabase PostGIS + Fase 6 Backend API FastAPI + Fase 7 Frontend WebGIS).*
