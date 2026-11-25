@@ -328,15 +328,17 @@ En esta fase final se construyó la aplicación web espacial **zero-build** en l
      - `PYTHON_VERSION`: `3.12.8`
 
 4. **Validación Post-Despliegue:**
-   - Una vez que el estado pase a **Live**, abrir `https://[TU-APP].onrender.com/docs` (Swagger UI) y verificar `https://[TU-APP].onrender.com/api/health` (`status: ok`, `database: connected`).
+   - URL en producción (Render): `https://postgrados-gis.onrender.com`
+   - Documentación Swagger UI: `https://postgrados-gis.onrender.com/docs`
+   - Health check: `https://postgrados-gis.onrender.com/api/health` (`status: ok`, `database: connected`).
 
 ---
 
 ## 8. CHECKLIST DE DESPLIEGUE FINAL EN PRODUCCIÓN (RENDER + CLOUDFLARE PAGES)
 
-- [ ] **1. Publicar Backend en Render:** Verificar que el Web Service con Root Directory `backend` esté en estado **Live** y que `/api/health` responda `status: ok` y `database: connected`.
-- [ ] **2. Configurar URL de Producción en el Frontend:** Editar la constante `PRODUCTION_API_URL` en [frontend/js/config.js](frontend/js/config.js) con la URL real de Render (sin `/` final).
-- [ ] **3. Subir Cambios a GitHub:** Hacer `git add frontend RESUMEN_IMPLEMENTACION.md`, `git commit` y `git push origin main`.
+- [ ] **1. Verificar Backend en Render (`/api/health` -> 200):** El servicio `https://postgrados-gis.onrender.com` ya está **Live**, pero `/api/health` devolvió HTTP `503` (`password authentication failed`) por formato/contraseña de `DATABASE_URL` en Render (verificar usuario `postgres.woyjgoxglpsjrqpwhuzd` y contraseña sin corchetes `[]`).
+- [x] **2. Configurar URL de Producción en el Frontend:** Constante `PRODUCTION_API_URL` actualizada en [frontend/js/config.js](frontend/js/config.js) apuntando a `https://postgrados-gis.onrender.com`.
+- [x] **3. Subir Cambios a GitHub:** Cambios de configuración y bitácora subidos a `main` para habilitar despliegue automático en Cloudflare Pages.
 - [ ] **4. Crear Proyecto en Cloudflare Pages:** Conectar el repositorio con *Framework preset:* `None`, *Build command:* vacío y *Build output directory:* `frontend`.
 - [ ] **5. Probar Deep-Link QR y GPS en Móvil (HTTPS):** Abrir `https://<tu-proyecto>.pages.dev/?qr=UAGRM-PG-FICCT`, validar carga automática de ficha, escáner de cámara y cálculo de ruta con servicios cercanos PostGIS.
 - [ ] **6. (Opcional) Endurecer CORS en Render:** Actualizar `CORS_ORIGINS` en Render con el dominio asignado por Cloudflare Pages (`https://<tu-proyecto>.pages.dev`).

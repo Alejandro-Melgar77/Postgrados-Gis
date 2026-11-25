@@ -8,7 +8,7 @@
  * Ejemplo: "https://sig-postgrados-uagrm-api.onrender.com"
  * =============================================================================
  */
-export const PRODUCTION_API_URL = "https://TU-SERVICIO.onrender.com";
+export const PRODUCTION_API_URL = "https://postgrados-gis.onrender.com";
 
 const LOCAL_HOSTNAMES = new Set(["localhost", "127.0.0.1", "[::1]"]);
 
