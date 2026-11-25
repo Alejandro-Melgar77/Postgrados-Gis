@@ -336,7 +336,7 @@ En esta fase final se construyó la aplicación web espacial **zero-build** en l
 
 ## 8. CHECKLIST DE DESPLIEGUE FINAL EN PRODUCCIÓN (RENDER + CLOUDFLARE PAGES)
 
-- [ ] **1. Verificar Backend en Render (`/api/health` -> 200):** El servicio `https://postgrados-gis.onrender.com` ya está **Live**, pero `/api/health` devolvió HTTP `503` (`password authentication failed`) por formato/contraseña de `DATABASE_URL` en Render (verificar usuario `postgres.woyjgoxglpsjrqpwhuzd` y contraseña sin corchetes `[]`).
+- [x] **1. Verificar Backend en Render (`/api/health` -> 200):** Verificado en producción (`https://postgrados-gis.onrender.com/api/health` → HTTP `200`, `status: ok`, `database: connected`, PostGIS `3.3`, `19` postgrados y `12` servicios).
 - [x] **2. Configurar URL de Producción en el Frontend:** Constante `PRODUCTION_API_URL` actualizada en [frontend/js/config.js](frontend/js/config.js) apuntando a `https://postgrados-gis.onrender.com`.
 - [x] **3. Subir Cambios a GitHub:** Cambios de configuración y bitácora subidos a `main` para habilitar despliegue automático en Cloudflare Pages.
 - [ ] **4. Crear Proyecto en Cloudflare Pages:** Conectar el repositorio con *Framework preset:* `None`, *Build command:* vacío y *Build output directory:* `frontend`.
