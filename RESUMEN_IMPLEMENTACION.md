@@ -271,38 +271,31 @@ OK (100% de pruebas en verde)
 
 ---
 
-## 7. PASOS MANUALES PENDIENTES PARA DESPLIEGUE EN RENDER
+## 7. ESTADO DE DESPLIEGUE EN GITHUB Y RENDER
 
-Para desplegar la API en la nube pública de **Render** de manera gratuita y permanente:
+1. **Repositorio GitHub Sincronizado:**
+   - Repositorio oficial: `https://github.com/Alejandro-Melgar77/Postgrados-Gis.git` (rama `main`).
+   - Se excluyeron en `.gitignore` las credenciales (`.env`), cachés de Python y la carpeta de cartografía base pesada (`SIG/`, ~767 MB) para cumplir los límites de GitHub.
 
-1. **Obtener la URL IPv4 del Session Pooler de Supabase:**
-   - En tu panel de Supabase: ir a **Project Settings** -> **Database** -> **Connection String** -> pestaña **Connection pooling** -> modo **Session** (puerto `5432`).
-   - Copiar la URI resultante (tendrá el formato `postgresql://postgres.[REF]:[PASS]@aws-0-[REGION].pooler.supabase.com:5432/postgres?sslmode=require`).
-   - *(Nota: No utilizar la URL directa `db.xxx.supabase.co` en Render porque solo resuelve por IPv6 en planes gratuitos).*
+2. **Session Pooler IPv4 de Supabase Verificado:**
+   - Endpoint verificado contra PostGIS 3.3:
+     `postgresql://postgres.woyjgoxglpsjrqpwhuzd:[PASSWORD]@aws-1-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require`
+   - *(Nota: No utilizar el host directo `db.xxx.supabase.co` en Render porque solo resuelve por IPv6 en planes gratuitos).*
 
-2. **Sincronizar el Repositorio en GitHub:**
-   - Hacer commit de la nueva carpeta `backend/` y el archivo `render.yaml`.
-   - Subir los cambios a tu rama principal de GitHub (`git push origin main`).
-
-3. **Crear el Web Service en Render:**
-   - En [dashboard.render.com](https://dashboard.render.com), seleccionar **New +** -> **Web Service**.
-   - Conectar tu repositorio de GitHub.
-   - Si Render detecta `render.yaml`, aplicará la configuración automáticamente. Si se configura manualmente:
+3. **Configuración del Web Service en Render:**
+   - En [dashboard.render.com](https://dashboard.render.com), seleccionar **New +** -> **Web Service** y conectar `Alejandro-Melgar77/Postgrados-Gis` (rama `main`):
      - **Root Directory:** `backend`
-     - **Runtime:** `Python 3`
+     - **Language / Runtime:** `Python 3`
      - **Build Command:** `pip install -r requirements.txt`
      - **Start Command:** `uvicorn main:app --host 0.0.0.0 --port $PORT`
      - **Instance Type:** `Free`
-
-4. **Cargar Variables de Entorno en el Panel de Render:**
-   - En la sección **Environment**:
-     - `PYTHON_VERSION`: `3.12.8`
+   - Variables de Entorno (**Environment Variables**):
+     - `DATABASE_URL`: URI del **Session Pooler** (puerto `5432`, con `?sslmode=require`)
      - `CORS_ORIGINS`: `*`
-     - `DATABASE_URL`: La URL del **Session Pooler** obtenida en el Paso 1.
+     - `PYTHON_VERSION`: `3.12.8`
 
-5. **Validar Despliegue Exitoso:**
-   - Una vez que el estado pase a **Live**, abrir `https://[TU-APP].onrender.com/docs` para visualizar Swagger UI.
-   - Ejecutar una petición a `https://[TU-APP].onrender.com/api/health` para comprobar que responda `status: ok` y `database: connected`.
+4. **Validación Post-Despliegue:**
+   - Una vez que el estado pase a **Live**, abrir `https://[TU-APP].onrender.com/docs` (Swagger UI) y verificar `https://[TU-APP].onrender.com/api/health` (`status: ok`, `database: connected`).
 
 ---
 *Fin del resumen ejecutivo actualizado (Fases 1 a 4 ArcMap 10.8 + Fase 5 Supabase PostGIS + Fase 6 Backend API FastAPI).*
