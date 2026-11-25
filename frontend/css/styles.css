@@ -758,6 +758,15 @@ dialog .btn--secondary {
 .legend-swatch--prov {
   background: var(--uagrm-teal);
 }
+.legend-swatch-poly {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: rgba(139, 21, 56, 0.28);
+  border: 2px solid var(--uagrm-maroon);
+  display: inline-block;
+  flex-shrink: 0;
+}
 
 .legend-dot {
   width: 18px;

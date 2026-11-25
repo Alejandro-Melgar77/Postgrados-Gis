@@ -194,6 +194,7 @@ def generar_seed():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.dirname(script_dir)
     geojson_path = os.path.join(project_root, "output_postgrados", "postgrados_uagrm_web.geojson")
+    poly_geojson_path = os.path.join(project_root, "output_postgrados", "postgrados_uagrm_poly_web.geojson")
     db_dir = os.path.join(project_root, "database")
     out_sql_path = os.path.join(db_dir, "seed_data.sql")
 
@@ -206,15 +207,28 @@ def generar_seed():
 
     print("======================================================================")
     print("GENERADOR DE SEED DATA SUPABASE (POSTGRESQL + POSTGIS)")
-    print("Leyendo GeoJSON: " + geojson_path)
+    print("Leyendo GeoJSON puntos: " + geojson_path)
+    if os.path.exists(poly_geojson_path):
+        print("Leyendo GeoJSON poligonos: " + poly_geojson_path)
     print("======================================================================")
 
-    # 2. Cargar GeoJSON en UTF-8
+    # 2. Cargar GeoJSON de puntos en UTF-8
     with io.open(geojson_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     features = data.get("features", [])
-    print("Features encontrados: %d" % len(features))
+    print("Features de puntos encontrados: %d" % len(features))
+
+    # 2.1 Cargar GeoJSON de poligonos si existe (Fase 8)
+    poly_by_id = {}
+    if os.path.exists(poly_geojson_path):
+        with io.open(poly_geojson_path, "r", encoding="utf-8") as f:
+            poly_data = json.load(f)
+        for pfeat in poly_data.get("features", []):
+            pid = pfeat.get("properties", {}).get("id_postg")
+            if pid:
+                poly_by_id[pid] = pfeat
+        print("Features de poligonos encontrados: %d" % len(poly_by_id))
 
     sql_lines = []
     sql_lines.append("-- ============================================================================")
@@ -244,7 +258,15 @@ def generar_seed():
         lon_ruta = props.get("lon_ruta", lon_edif)
         lat_ruta = props.get("lat_ruta", lat_edif)
 
-        id_postg = escape_sql_str(props.get("id_postg"))
+        raw_id = props.get("id_postg")
+        poly_feat = poly_by_id.get(raw_id) if raw_id else None
+        raw_area = props.get("area_m2", 0.0)
+        if poly_feat:
+            poly_area = poly_feat.get("properties", {}).get("area_m2")
+            if poly_area is not None and float(poly_area) > 0:
+                raw_area = poly_area
+
+        id_postg = escape_sql_str(raw_id)
         cod_fac = escape_sql_str(props.get("cod_fac"))
         nom_unidad = escape_sql_str(props.get("nom_unidad"))
         nom_facult = escape_sql_str(props.get("nom_facult"))
@@ -264,7 +286,7 @@ def generar_seed():
         horario = escape_sql_str(props.get("horario"))
         estado_geo = escape_sql_str(props.get("estado_geo", "Verificado"))
         cod_qr = escape_sql_str(props.get("cod_qr"))
-        area_m2 = format_number(props.get("area_m2", 0.0), 2)
+        area_m2 = format_number(raw_area, 2)
         programas = escape_sql_str(props.get("programas"))
         sitio_web = escape_sql_str(props.get("sitio_web"))
         url_foto = escape_sql_str(props.get("url_foto"))
@@ -272,20 +294,26 @@ def generar_seed():
         geom_sql = "ST_SetSRID(ST_MakePoint(%s, %s), 4326)" % (lon_wgs84, lat_wgs84)
         geom_acceso_sql = "ST_SetSRID(ST_MakePoint(%s, %s), 4326)" % (lon_ruta_str, lat_ruta_str)
 
+        if poly_feat and poly_feat.get("geometry"):
+            poly_json_str = json.dumps(poly_feat["geometry"], ensure_ascii=False, separators=(",", ":"))
+            geom_poly_sql = "ST_SetSRID(ST_GeomFromGeoJSON(%s), 4326)" % escape_sql_str(poly_json_str)
+        else:
+            geom_poly_sql = "NULL"
+
         stmt = (
             "INSERT INTO public.postgrados_uagrm (\n"
             "    id_postg, cod_fac, nom_unidad, nom_facult, tipo_ent,\n"
             "    ambito, municipio, campus, modulo_pab, direccion,\n"
             "    lat_wgs84, lon_wgs84, lat_ruta, lon_ruta, dist_via_m,\n"
             "    telefono, correo, horario, estado_geo, cod_qr,\n"
-            "    area_m2, programas, sitio_web, url_foto, geom, geom_acceso\n"
+            "    area_m2, programas, sitio_web, url_foto, geom, geom_acceso, geom_poly\n"
             ") VALUES (\n"
             "    %(id_postg)s, %(cod_fac)s, %(nom_unidad)s, %(nom_facult)s, %(tipo_ent)s,\n"
             "    %(ambito)s, %(municipio)s, %(campus)s, %(modulo_pab)s, %(direccion)s,\n"
             "    %(lat_wgs84)s, %(lon_wgs84)s, %(lat_ruta)s, %(lon_ruta)s, %(dist_via_m)s,\n"
             "    %(telefono)s, %(correo)s, %(horario)s, %(estado_geo)s, %(cod_qr)s,\n"
             "    %(area_m2)s, %(programas)s, %(sitio_web)s, %(url_foto)s,\n"
-            "    %(geom)s, %(geom_acceso)s\n"
+            "    %(geom)s, %(geom_acceso)s, %(geom_poly)s\n"
             ")\n"
             "ON CONFLICT (id_postg) DO UPDATE SET\n"
             "    cod_fac = EXCLUDED.cod_fac,\n"
@@ -313,6 +341,7 @@ def generar_seed():
             "    url_foto = EXCLUDED.url_foto,\n"
             "    geom = EXCLUDED.geom,\n"
             "    geom_acceso = EXCLUDED.geom_acceso,\n"
+            "    geom_poly = EXCLUDED.geom_poly,\n"
             "    updated_at = NOW();\n"
         ) % {
             "id_postg": id_postg,
@@ -340,7 +369,8 @@ def generar_seed():
             "sitio_web": sitio_web,
             "url_foto": url_foto,
             "geom": geom_sql,
-            "geom_acceso": geom_acceso_sql
+            "geom_acceso": geom_acceso_sql,
+            "geom_poly": geom_poly_sql
         }
         sql_lines.append(stmt)
 

@@ -185,6 +185,41 @@ def listar_postgrados(
     return build_feature_collection(features)
 
 
+@app.get("/api/postgrados/poligonos", tags=["Postgrados"])
+def listar_poligonos_postgrados(
+    ambito: Optional[str] = Query(None, description="Filtro exacto por ámbito (ej. Urbano, Provincial)"),
+):
+    """
+    Retorna un GeoJSON FeatureCollection con las huellas poligonales (geom_poly)
+    de las unidades de postgrado en EPSG:4326 generadas directamente por PostGIS.
+    """
+    conditions = ["geom_poly IS NOT NULL"]
+    params = []
+
+    if ambito:
+        conditions.append("LOWER(ambito) = LOWER(%s)")
+        params.append(ambito)
+
+    where_clause = f" WHERE {' AND '.join(conditions)}"
+    sql = f"""
+        SELECT
+            id_postg, cod_fac, nom_unidad, tipo_ent, ambito, campus, area_m2, estado_geo,
+            ST_AsGeoJSON(geom_poly)::json AS geometry
+        FROM public.postgrados_uagrm
+        {where_clause}
+        ORDER BY id_postg ASC;
+    """
+
+    rows = query_all(sql, tuple(params))
+    features = []
+    for row in rows:
+        geom = row.pop("geometry")
+        feat_id = row.get("id_postg")
+        features.append(build_feature(feat_id, geom, row))
+
+    return build_feature_collection(features)
+
+
 @app.get("/api/postgrados/{id_postg}", tags=["Postgrados"])
 def obtener_postgrado_por_id(id_postg: str):
     """

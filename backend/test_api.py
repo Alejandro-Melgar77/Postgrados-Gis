@@ -181,6 +181,27 @@ class TestBackendFastAPIPostGIS(unittest.TestCase):
         self.assertEqual(serv["por_tipo"]["Punto_Encuentro"], 2)
         print("  [OK] GET /api/resumen -> 200 | Contadores validados con éxito")
 
+    def test_11_listar_poligonos(self):
+        """Verifica GET /api/postgrados/poligonos con geometrias Polygon y area_m2 > 0."""
+        res = client.get("/api/postgrados/poligonos")
+        self.assertEqual(res.status_code, 200)
+        fc = res.json()
+        self.assertEqual(fc["type"], "FeatureCollection")
+        self.assertEqual(len(fc["features"]), 19)
+
+        for feat in fc["features"]:
+            self.assertEqual(feat["type"], "Feature")
+            self.assertEqual(feat["geometry"]["type"], "Polygon")
+            props = feat["properties"]
+            for key in ("id_postg", "cod_fac", "nom_unidad", "ambito", "campus", "area_m2", "estado_geo"):
+                self.assertIn(key, props)
+            self.assertGreater(float(props["area_m2"]), 0.0)
+
+        res_urb = client.get("/api/postgrados/poligonos?ambito=Urbano")
+        self.assertEqual(res_urb.status_code, 200)
+        self.assertEqual(len(res_urb.json()["features"]), 13)
+        print("  [OK] GET /api/postgrados/poligonos -> 200 (19 Polygon, Urbano=13, area_m2 > 0)")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

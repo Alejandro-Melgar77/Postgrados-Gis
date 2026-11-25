@@ -199,6 +199,18 @@ export function fetchPostgrados(filters = {}, onRetry = null) {
   return apiFetch(path, { showBanner: true, onRetry });
 }
 
+export function fetchPoligonos(filters = {}, onRetry = null) {
+  const params = new URLSearchParams();
+  if (filters.ambito && filters.ambito !== "Todos") {
+    params.set("ambito", filters.ambito);
+  }
+  const queryString = params.toString();
+  const path = queryString
+    ? `/api/postgrados/poligonos?${queryString}`
+    : "/api/postgrados/poligonos";
+  return apiFetch(path, { showBanner: false, onRetry });
+}
+
 export function fetchPostgradoById(idPostg) {
   return apiFetch(`/api/postgrados/${encodeURIComponent(idPostg)}`, {
     showBanner: false,

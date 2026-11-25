@@ -4,6 +4,8 @@ import {
   SERVICIO_STYLES,
 } from "./config.js";
 import {
+  fetchPoligonos,
+  fetchPostgradoById,
   fetchPostgrados,
   fetchResumen,
   fetchServicios,
@@ -14,9 +16,11 @@ import {
   highlightAndFocusPostgrado,
   initMap,
   invalidateMapSize,
+  renderPoligonos,
   renderPostgrados,
   renderServicios,
   resetMapView,
+  setPoligonosVisible,
   setServiciosVisible,
 } from "./map.js";
 import {
@@ -39,6 +43,7 @@ const state = {
   allServicios: null,
   selectedFeature: null,
   serviciosVisible: true,
+  poligonosVisible: true,
   filters: {
     ambito: "Urbano",
     campus: "Todos",
@@ -532,14 +537,39 @@ async function selectPostgrado(feature, options = {}) {
 }
 
 /**
- * Carga /api/postgrados aplicando los filtros activos.
+ * Selecciona una unidad a partir de su id_postg (ej. clic sobre un polígono).
+ */
+async function selectPostgradoById(idPostg) {
+  if (!idPostg) return;
+  let found = state.features.find((f) => f.properties?.id_postg === idPostg);
+  if (!found) {
+    try {
+      found = await fetchPostgradoById(idPostg);
+    } catch {
+      return;
+    }
+  }
+  if (found) {
+    selectPostgrado(found);
+  }
+}
+
+/**
+ * Carga /api/postgrados y /api/postgrados/poligonos aplicando los filtros activos.
  */
 async function loadPostgradosLayer(options = {}) {
   const { skipFitBounds = false, drawerApi = null } = options;
   try {
-    const fc = await fetchPostgrados(state.filters, () =>
-      loadPostgradosLayer(options)
-    );
+    const [ptsResult, polyResult] = await Promise.allSettled([
+      fetchPostgrados(state.filters, () => loadPostgradosLayer(options)),
+      fetchPoligonos(state.filters),
+    ]);
+
+    if (ptsResult.status !== "fulfilled") {
+      throw ptsResult.reason;
+    }
+
+    const fc = ptsResult.value;
     const features = fc?.features || [];
     state.features = features;
 
@@ -547,6 +577,18 @@ async function loadPostgradosLayer(options = {}) {
       selectPostgrado(feature);
     });
     renderResultsList(features, drawerApi);
+
+    if (polyResult.status === "fulfilled") {
+      const visibleIds = new Set(features.map((f) => f.properties?.id_postg));
+      const polyFeatures = (polyResult.value?.features || []).filter((pf) =>
+        visibleIds.has(pf.properties?.id_postg)
+      );
+      renderPoligonos(
+        { type: "FeatureCollection", features: polyFeatures },
+        selectPostgradoById
+      );
+      setPoligonosVisible(state.poligonosVisible);
+    }
 
     if (!skipFitBounds && (state.filters.ambito !== "Urbano" || state.filters.q || state.filters.campus !== "Todos")) {
       fitBoundsToFeatures(features);
@@ -790,7 +832,19 @@ async function bootstrap() {
     selectPostgrado(feature, meta);
   });
 
-  // Toggle rápido de Servicios de Apoyo en barra superior
+  // Toggle rápido de Huellas Poligonales y Servicios de Apoyo en barra superior
+  const togglePolygonsBtn = document.getElementById("toggle-polygons-btn");
+  if (togglePolygonsBtn) {
+    togglePolygonsBtn.addEventListener("click", () => {
+      state.poligonosVisible = !state.poligonosVisible;
+      togglePolygonsBtn.setAttribute(
+        "aria-pressed",
+        String(state.poligonosVisible)
+      );
+      setPoligonosVisible(state.poligonosVisible);
+    });
+  }
+
   const toggleServBtn = document.getElementById("toggle-services-btn");
   if (toggleServBtn) {
     toggleServBtn.addEventListener("click", () => {

@@ -259,6 +259,26 @@ En esta fase final se construyó la aplicación web espacial **zero-build** en l
 
 ---
 
+### FASE 8: Integración de Polígonos, Sincronizador ArcMap y Kit de Defensa
+
+En esta fase de cierre se completó la **tríada vectorial** (puntos, líneas/rutas y polígonos con superficies reales en `m²`) de extremo a extremo desde **ArcMap 10.8** hasta **Leaflet**, junto con herramientas de exposición para la defensa universitaria:
+
+1. **Sincronizador Bidireccional desde ArcMap 10.8 ([scripts/exportar_desde_arcmap.py](scripts/exportar_desde_arcmap.py)):**
+   - Ejecutable en **Python 2.7 (`arcpy`)**, lee `postgrados_uagrm_pts` y `postgrados_uagrm_poly` desde `postgrados_uagrm.gdb` (o `.shp`), recalcula el área real en `EPSG:32720 (UTM Zone 20S)` (`703.27`–`703.28 m²`), sincroniza `area_m2` y coordenadas reales en `.gdb`, `.shp` y `.csv`, y exporta [output_postgrados/postgrados_uagrm_web.geojson](output_postgrados/postgrados_uagrm_web.geojson) y [output_postgrados/postgrados_uagrm_poly_web.geojson](output_postgrados/postgrados_uagrm_poly_web.geojson) en `EPSG:4326`.
+2. **Carga Real de Polígonos en Supabase PostGIS ([scripts/generar_seed_supabase.py](scripts/generar_seed_supabase.py)):**
+   - Actualizado para poblar `geom_poly` con `ST_SetSRID(ST_GeomFromGeoJSON(...), 4326)` y el valor recalculado de `area_m2` en [database/seed_data.sql](database/seed_data.sql).
+   - Migrado y validado en Supabase: **19/19 registros** con `geom_poly IS NOT NULL` y `ST_IsValid(geom_poly) = TRUE`.
+3. **Endpoint Espacial de Polígonos y Suite API 11/11 ([backend/main.py](backend/main.py) y [backend/test_api.py](backend/test_api.py)):**
+   - Nuevo endpoint **`GET /api/postgrados/poligonos`** (con filtro opcional `ambito`) construido directamente con `ST_AsGeoJSON(geom_poly)::json`.
+   - Nueva prueba `test_11_listar_poligonos` aprobada (`11/11` pruebas en verde en `18.807s`).
+4. **Capa de Huellas Poligonales en Leaflet y Hoja QR Imprimible:**
+   - Integración de `GET /api/postgrados/poligonos` en [frontend/js/api.js](frontend/js/api.js), [frontend/js/map.js](frontend/js/map.js) y [frontend/js/app.js](frontend/js/app.js) con capa conmutable **"Huellas"** en barra superior, control de capas y leyenda, tooltip con sigla + `area_m2` y apertura de ficha al hacer clic.
+   - Nueva hoja imprimible [frontend/qr-imprimible.html](frontend/qr-imprimible.html) agrupada en **Santa Cruz Urbano (13)** y **Sedes Provinciales (6)** con filtros rápidos, `@media print` para Carta/A4 y botón **Imprimir QRs** accesible desde el visor.
+5. **Guía Rápida de Defensa ([GUIA_DEFENSA_INF442.md](GUIA_DEFENSA_INF442.md)):**
+   - Diagrama ASCII completo, guion paso a paso de 5 minutos, comandos de resincronización tras ediciones en ArcMap 10.8 y respuestas técnicas a 5 preguntas frecuentes de SIG.
+
+---
+
 ## 6. INVENTARIO COMPLETO DE ARCHIVOS DEL PROYECTO (ACTUALIZADO)
 
 | Archivo / Directorio | Formato | Función Principal |
@@ -269,11 +289,13 @@ En esta fase final se construyó la aplicación web espacial **zero-build** en l
 | `output_postgrados/red_vial_uagrm_referencial.*` | Shapefile (UTM 20S) | Ejes de avenidas y calles estructurantes de la zona universitaria. |
 | `output_postgrados/postgrados_uagrm.gdb` | ESRI File Geodatabase | Geodatabase que agrupa las 4 feature classes con Field Aliases. |
 | `output_postgrados/postgrados_uagrm.csv` | CSV (UTF-8 con BOM) | Archivo alfanumérico para *Add XY Data* en ArcMap o Excel. |
-| `output_postgrados/postgrados_uagrm_web.geojson` | GeoJSON (EPSG:4326) | Dataset fuente para la aplicación web interactiva y móviles. |
+| `output_postgrados/postgrados_uagrm_web.geojson` | GeoJSON (EPSG:4326) | Dataset fuente de puntos para la aplicación web interactiva y móviles. |
+| `output_postgrados/postgrados_uagrm_poly_web.geojson` | GeoJSON (EPSG:4326) | Dataset fuente de 19 polígonos (huellas y áreas `m²`) para PostGIS y Leaflet. |
 | `scripts/generar_capa_postgrados.py` | Python 2.7 (ArcPy) | Script reproducible de generación cartográfica. |
 | `scripts/vincular_red_vial.py` | Python 2.7 (ArcPy) | Snapping geométrico a red vial compatible con ArcMap Basic. |
 | `scripts/crear_red_vial_referencial.py` | Python 2.7 (ArcPy) | Generador de red vial de avenidas universitarias. |
 | `scripts/verificar_calidad_sig.py` | Python 2.7 (ArcPy) | Script de auditoría de capas ArcMap. |
+| `scripts/exportar_desde_arcmap.py` | Python 2.7 (ArcPy) | Recálculo de áreas UTM 20S y exportación sincronizada de puntos/polígonos desde ArcMap. |
 | `scripts/generar_seed_supabase.py` | Python 2.7 y 3.x | Generador de SQL seed para Supabase desde el GeoJSON. |
 | `scripts/migrar_supabase.py` | Python 3.x | Script de migración y ejecución directa contra Supabase vía SSL. |
 | `database/schema.sql` | SQL PostGIS | Esquema DDL de tablas, extensiones, índices GiST y RLS en Supabase. |
@@ -283,7 +305,7 @@ En esta fase final se construyó la aplicación web espacial **zero-build** en l
 | `backend/main.py` | Python 3 (FastAPI) | Aplicación API WebGIS con endpoints espaciales GeoJSON, QR y proximidad. |
 | `backend/db.py` | Python 3 (Psycopg v3) | Capa de conexión y cursores PostGIS con dict_row y SSL forzado. |
 | `backend/requirements.txt` | Texto | Dependencias mínimas del backend (FastAPI, uvicorn, psycopg, dotenv, httpx). |
-| `backend/test_api.py` | Python 3 (TestClient) | Suite de 10 pruebas automatizadas contra Supabase en producción. |
+| `backend/test_api.py` | Python 3 (TestClient) | Suite de 11 pruebas automatizadas contra Supabase en producción. |
 | `backend/.env.example` | Configuración | Plantilla de variables para backend con advertencia de red IPv4/IPv6. |
 | `backend/README_BACKEND.md` | Markdown | Manual operativo del backend y guía paso a paso para Render. |
 | `render.yaml` | YAML IaC | Manifiesto de infraestructura para despliegue automatizado en Render. |
@@ -300,7 +322,9 @@ En esta fase final se construyó la aplicación web espacial **zero-build** en l
 | `frontend/js/qr.js` | JavaScript (ESM) | Lectura de `?qr=`, generador QR imprimible en PNG y escáner de cámara móvil. |
 | `frontend/js/app.js` | JavaScript (ESM) | Controlador principal: contadores, buscador, filtros, ficha y tabla exportable CSV. |
 | `frontend/assets/placeholder.svg` | SVG | Imagen vectorial de respaldo cuando falte la fotografía `PG-XX.jpg`. |
+| `frontend/qr-imprimible.html` | HTML5 + CSS Print | Hoja imprimible de 19 tarjetas QR (13 urbanas + 6 provinciales) para defensa móvil. |
 | `frontend/README_FRONTEND.md` | Markdown | Guía de pruebas locales y despliegue *zero-build* en Cloudflare Pages. |
+| `GUIA_DEFENSA_INF442.md` | Markdown | Guion de defensa de 5 minutos, resincronización ArcMap y respuestas técnicas SIG. |
 
 ---
 
@@ -342,9 +366,11 @@ En esta fase final se construyó la aplicación web espacial **zero-build** en l
 - [x] **2. Configurar URL de Producción en el Frontend:** Constante `PRODUCTION_API_URL` actualizada en [frontend/js/config.js](frontend/js/config.js) apuntando a `https://postgrados-gis.onrender.com`.
 - [x] **3. Subir Cambios a GitHub:** Cambios de configuración y bitácora subidos a `main` para habilitar despliegue automático en Cloudflare Pages.
 - [x] **4. Crear Proyecto en Cloudflare Pages:** Desplegado en vivo en `https://postgrados-gis.pages.dev/` (*Framework preset:* `None`, *Build command:* vacío, *Build output directory:* `frontend`).
-- [ ] **5. Probar Deep-Link QR y GPS en Móvil (HTTPS):** Abrir `https://postgrados-gis.pages.dev/?qr=UAGRM-PG-FICCT`, validar carga automática de ficha, escáner de cámara y cálculo de ruta con servicios cercanos PostGIS.
-- [ ] **6. (Opcional) Endurecer CORS en Render:** Actualizar `CORS_ORIGINS` en Render con el dominio asignado por Cloudflare Pages (`https://postgrados-gis.pages.dev`).
-- [ ] **7. (Opcional) Cargar Fotografías Reales:** Guardar las fotos en `frontend/assets/fotos/PG-00.jpg` ... `PG-18.jpg` para reemplazar el respaldo SVG automático.
+- [x] **5. Integrar Polígonos (`geom_poly`), Endpoint `/api/postgrados/poligonos` y Hoja QR Imprimible (Fase 8):** 19 polígonos válidos cargados en Supabase, `11/11` tests API en verde y capa vectorial en Leaflet verificada en local.
+- [x] **6. Subir Cambios de Fase 8 a GitHub (Redeploy):** Cambios subidos a `main` para activar el redeploy automático en Render (nuevo endpoint `/api/postgrados/poligonos`) y Cloudflare Pages (capa de polígonos + `qr-imprimible.html`).
+- [ ] **7. Probar Deep-Link QR y GPS en Móvil (HTTPS):** Abrir `https://postgrados-gis.pages.dev/?qr=UAGRM-PG-FICCT` y `https://postgrados-gis.pages.dev/qr-imprimible.html`, validar huellas poligonales, escáner de cámara y ruta con servicios cercanos PostGIS.
+- [ ] **8. (Opcional) Endurecer CORS en Render:** Actualizar `CORS_ORIGINS` en Render con el dominio asignado por Cloudflare Pages (`https://postgrados-gis.pages.dev`).
+- [ ] **9. (Opcional) Cargar Fotografías Reales:** Guardar las fotos en `frontend/assets/fotos/PG-00.jpg` ... `PG-18.jpg` para reemplazar el respaldo SVG automático.
 
 ---
-*Fin del resumen ejecutivo actualizado (Fases 1 a 4 ArcMap 10.8 + Fase 5 Supabase PostGIS + Fase 6 Backend API FastAPI + Fase 7 Frontend WebGIS).*
+*Fin del resumen ejecutivo actualizado (Fases 1 a 4 ArcMap 10.8 + Fase 5 Supabase PostGIS + Fase 6 Backend API FastAPI + Fase 7 Frontend WebGIS + Fase 8 Polígonos, Sincronizador y Kit de Defensa).*

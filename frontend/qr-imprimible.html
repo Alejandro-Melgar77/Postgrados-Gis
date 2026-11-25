@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarjetas QR Imprimibles — Postgrados UAGRM (INF442-SA)</title>
+  <meta name="description" content="Hoja imprimible de códigos QR para consulta móvil inmediata (Requisito #21) de las 19 Unidades de Postgrado UAGRM.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f2b5b'/%3E%3Cpath d='M16 5c-4.4 0-8 3.6-8 8 0 5.6 8 14 8 14s8-8.4 8-14c0-4.4-3.6-8-8-8z' fill='%238b1538' stroke='%23d4af37' stroke-width='2'/%3E%3Ccircle cx='16' cy='13' r='3' fill='%23ffffff'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --uagrm-navy: #0f2b5b;
+      --uagrm-maroon: #8b1538;
+      --uagrm-gold: #d4af37;
+      --uagrm-teal: #0d7a6f;
+      --border: #d7e0ec;
+      --bg: #f1f5f9;
+      --text: #0f172a;
+      --muted: #475569;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: linear-gradient(120deg, #091d3f, var(--uagrm-navy));
+      color: #ffffff;
+      border-bottom: 3px solid var(--uagrm-gold);
+      padding: 12px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .toolbar__title {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+    .toolbar__sub {
+      margin: 2px 0 0;
+      font-size: 0.78rem;
+      color: #cbd5e1;
+    }
+
+    .toolbar__controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-block-size: 36px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      font: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+    .btn--active {
+      background: #ffffff;
+      color: var(--uagrm-navy);
+      border-color: #ffffff;
+    }
+    .btn--print {
+      background: var(--uagrm-maroon);
+      border-color: var(--uagrm-gold);
+    }
+    .btn--print:hover {
+      background: #72102d;
+    }
+
+    :where(a, button):focus-visible {
+      outline: 3px solid #93c5fd;
+      outline-offset: 2px;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    .status-banner {
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: #e0ecff;
+      border: 1px solid #bfdbfe;
+      color: var(--uagrm-navy);
+      font-size: 0.9rem;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .status-banner[hidden] {
+      display: none;
+    }
+    .status-banner--error {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+    .status-banner .btn {
+      background: var(--uagrm-navy);
+      border-color: var(--uagrm-navy);
+      color: #ffffff;
+    }
+
+    .group-section {
+      margin-bottom: 28px;
+    }
+    .group-section[hidden] {
+      display: none;
+    }
+
+    .group-title {
+      margin: 0 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--uagrm-navy);
+      color: var(--uagrm-navy);
+      font-size: 1.05rem;
+      break-after: avoid;
+    }
+
+    .qr-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+      gap: 14px;
+    }
+
+    .qr-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-top: 4px solid var(--uagrm-maroon);
+      border-radius: 12px;
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .qr-card--dgp {
+      border-top-color: var(--uagrm-navy);
+    }
+    .qr-card--provincial {
+      border-top-color: var(--uagrm-teal);
+    }
+
+    .qr-card__top {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .qr-badge {
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #ffffff;
+      background: var(--uagrm-maroon);
+    }
+    .qr-card--dgp .qr-badge {
+      background: var(--uagrm-navy);
+    }
+    .qr-card--provincial .qr-badge {
+      background: var(--uagrm-teal);
+    }
+
+    .qr-id {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .qr-box {
+      padding: 8px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #ffffff;
+      margin: 4px 0;
+    }
+    .qr-box img,
+    .qr-box canvas {
+      display: block;
+    }
+
+    .qr-card__unit {
+      margin: 0;
+      font-size: 0.84rem;
+      line-height: 1.25;
+      color: var(--uagrm-navy);
+    }
+
+    .qr-card__addr {
+      margin: 0;
+      font-size: 0.72rem;
+      color: var(--muted);
+      line-height: 1.3;
+    }
+
+    .qr-card__code {
+      margin-top: auto;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    @media print {
+      @page {
+        size: letter portrait;
+        margin: 10mm;
+      }
+
+      body {
+        background: #ffffff;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .container {
+        max-width: none;
+        padding: 0;
+      }
+
+      .qr-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+
+      .qr-card {
+        padding: 10px 8px;
+        border-color: #cbd5e1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="toolbar no-print">
+    <div>
+      <h1 class="toolbar__title">Tarjetas QR Imprimibles — Postgrados UAGRM (Requisito #21)</h1>
+      <p class="toolbar__sub">Escaneá cualquier código con tu celular para abrir su ficha técnica y ruta GPS en el Visor WebGIS.</p>
+    </div>
+    <div class="toolbar__controls">
+      <button id="filter-all-btn" type="button" class="btn btn--active" aria-pressed="true">Todos (19)</button>
+      <button id="filter-urban-btn" type="button" class="btn" aria-pressed="false">Solo Urbanos (13)</button>
+      <button id="print-btn" type="button" class="btn btn--print">Imprimir / Guardar PDF</button>
+      <a href="index.html" class="btn">Volver al Visor WebGIS</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="qr-status" class="status-banner no-print" role="status" aria-live="polite">
+      <span id="qr-status-text">Conectando con el servidor SIG para generar los códigos QR...</span>
+      <button id="qr-retry-btn" type="button" class="btn" hidden>Reintentar</button>
+    </div>
+
+    <section id="sec-urbanos" class="group-section" hidden>
+      <h2 class="group-title">Santa Cruz Urbano — Unidades de Postgrado (13)</h2>
+      <div id="grid-urbanos" class="qr-grid"></div>
+    </section>
+
+    <section id="sec-provinciales" class="group-section" hidden>
+      <h2 class="group-title">Sedes Provinciales — Facultades Integrales (6)</h2>
+      <div id="grid-provinciales" class="qr-grid"></div>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous"></script>
+  <script type="module">
+    import { API_BASE_URL, API_TIMEOUT_MS } from "./js/config.js";
+
+    const statusBanner = document.getElementById("qr-status");
+    const statusText = document.getElementById("qr-status-text");
+    const retryBtn = document.getElementById("qr-retry-btn");
+    const secUrbanos = document.getElementById("sec-urbanos");
+    const secProvinciales = document.getElementById("sec-provinciales");
+    const gridUrbanos = document.getElementById("grid-urbanos");
+    const gridProvinciales = document.getElementById("grid-provinciales");
+
+    const filterAllBtn = document.getElementById("filter-all-btn");
+    const filterUrbanBtn = document.getElementById("filter-urban-btn");
+    const printBtn = document.getElementById("print-btn");
+
+    function buildCard(feature) {
+      const p = feature.properties || {};
+      const card = document.createElement("article");
+      const tipoClass =
+        p.tipo_ent === "Rectorado_DGP"
+          ? "qr-card--dgp"
+          : p.tipo_ent === "Sede_Provincial"
+          ? "qr-card--provincial"
+          : "";
+      card.className = `qr-card ${tipoClass}`.trim();
+
+      const top = document.createElement("div");
+      top.className = "qr-card__top";
+
+      const badge = document.createElement("span");
+      badge.className = "qr-badge";
+      badge.textContent = p.cod_fac || p.id_postg;
+
+      const idEl = document.createElement("span");
+      idEl.className = "qr-id";
+      idEl.textContent = p.id_postg || "";
+
+      top.append(badge, idEl);
+
+      const qrBox = document.createElement("div");
+      qrBox.className = "qr-box";
+
+      const targetUrl = `${window.location.origin}/?qr=${encodeURIComponent(p.cod_qr || "")}`;
+      if (typeof window.QRCode === "function") {
+        new window.QRCode(qrBox, {
+          text: targetUrl,
+          width: 136,
+          height: 136,
+          colorDark: "#0f2b5b",
+          colorLight: "#ffffff",
+          correctLevel: window.QRCode.CorrectLevel.M,
+        });
+      }
+
+      const unitTitle = document.createElement("h3");
+      unitTitle.className = "qr-card__unit";
+      unitTitle.textContent = p.nom_unidad || "";
+
+      const addr = document.createElement("p");
+      addr.className = "qr-card__addr";
+      const locText = p.ambito === "Provincial" ? `${p.municipio || ""} · ` : "";
+      const modText = p.modulo_pab && p.modulo_pab !== "S/D" ? `${p.modulo_pab} · ` : "";
+      addr.textContent = `${locText}${modText}${p.direccion || ""}`;
+
+      const codeEl = document.createElement("span");
+      codeEl.className = "qr-card__code";
+      codeEl.textContent = p.cod_qr || "";
+
+      card.append(top, qrBox, unitTitle, addr, codeEl);
+      return card;
+    }
+
+    function applyFilter(mode) {
+      const onlyUrban = mode === "urban";
+      filterAllBtn.classList.toggle("btn--active", !onlyUrban);
+      filterAllBtn.setAttribute("aria-pressed", String(!onlyUrban));
+      filterUrbanBtn.classList.toggle("btn--active", onlyUrban);
+      filterUrbanBtn.setAttribute("aria-pressed", String(onlyUrban));
+      secProvinciales.hidden = onlyUrban;
+    }
+
+    async function loadQrCards() {
+      statusBanner.hidden = false;
+      statusBanner.classList.remove("status-banner--error");
+      retryBtn.hidden = true;
+      statusText.textContent = "Conectando con el servidor SIG en Render para cargar las 19 unidades...";
+
+      const slowTimer = window.setTimeout(() => {
+        statusText.textContent =
+          "El servidor gratuito en Render está despertando (puede tardar 30–50 s en la primera petición)...";
+      }, 3000);
+
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/postgrados`, {
+          headers: { Accept: "application/json" },
+          signal: controller.signal,
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const fc = await res.json();
+        const features = fc?.features || [];
+
+        gridUrbanos.replaceChildren();
+        gridProvinciales.replaceChildren();
+
+        const urbanos = features.filter((f) => f.properties?.ambito === "Urbano");
+        const provinciales = features.filter((f) => f.properties?.ambito !== "Urbano");
+
+        for (const f of urbanos) gridUrbanos.appendChild(buildCard(f));
+        for (const f of provinciales) gridProvinciales.appendChild(buildCard(f));
+
+        secUrbanos.hidden = urbanos.length === 0;
+        secProvinciales.hidden = provinciales.length === 0;
+        statusBanner.hidden = true;
+      } catch {
+        statusBanner.classList.add("status-banner--error");
+        statusText.textContent =
+          "No se pudo conectar con la API WebGIS (timeout o servidor iniciándose).";
+        retryBtn.hidden = false;
+      } finally {
+        window.clearTimeout(slowTimer);
+        window.clearTimeout(timeoutId);
+      }
+    }
+
+    filterAllBtn.addEventListener("click", () => applyFilter("all"));
+    filterUrbanBtn.addEventListener("click", () => applyFilter("urban"));
+    printBtn.addEventListener("click", () => window.print());
+    retryBtn.addEventListener("click", loadQrCards);
+
+    loadQrCards();
+  </script>
+</body>
+</html>

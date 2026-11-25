@@ -15,6 +15,7 @@ import {
  */
 
 let mapInstance = null;
+let poligonosLayer = null;
 let postgradosLayer = null;
 let serviciosLayer = null;
 let nearbyLayer = null;
@@ -224,6 +225,7 @@ export function initMap(containerId = "map") {
 
   osmLayer.addTo(mapInstance);
 
+  poligonosLayer = L.layerGroup().addTo(mapInstance);
   postgradosLayer = L.layerGroup().addTo(mapInstance);
   serviciosLayer = L.layerGroup().addTo(mapInstance);
   nearbyLayer = L.layerGroup().addTo(mapInstance);
@@ -236,6 +238,7 @@ export function initMap(containerId = "map") {
   };
 
   const overlayMaps = {
+    "Huellas / Superficies (Polígonos)": poligonosLayer,
     "Unidades de Postgrado": postgradosLayer,
     "Servicios de Apoyo": serviciosLayer,
   };
@@ -339,6 +342,79 @@ export function renderPostgrados(featureCollection, onSelect) {
 
     marker.addTo(postgradosLayer);
     markerByPostgId.set(props.id_postg, { marker, feature });
+  }
+}
+
+/**
+ * Renderiza la capa de huellas poligonales desde GET /api/postgrados/poligonos.
+ */
+export function renderPoligonos(featureCollection, onSelectById) {
+  if (!mapInstance || !poligonosLayer) return;
+  poligonosLayer.clearLayers();
+
+  const features = featureCollection?.features || [];
+  if (features.length === 0) return;
+
+  const geoLayer = L.geoJSON(
+    { type: "FeatureCollection", features },
+    {
+      style: (feature) => {
+        const tipo = feature?.properties?.tipo_ent;
+        const palette =
+          POSTGRADO_STYLES[tipo] || POSTGRADO_STYLES.Unidad_Facultativa;
+        return {
+          color: palette.color,
+          weight: 2.2,
+          opacity: 0.92,
+          fillColor: palette.color,
+          fillOpacity: 0.25,
+        };
+      },
+      onEachFeature: (feature, layer) => {
+        const props = feature.properties || {};
+        const areaNum = Number(props.area_m2);
+        const areaTxt = Number.isFinite(areaNum)
+          ? `${areaNum.toFixed(2)} m²`
+          : "S/D";
+        const label = `${props.cod_fac || props.id_postg} · ${areaTxt}`;
+
+        layer.bindTooltip(label, {
+          sticky: true,
+          className: "uagrm-tooltip",
+        });
+
+        layer.on({
+          mouseover: (e) => {
+            e.target.setStyle({
+              weight: 3.5,
+              color: "#d4af37",
+              fillOpacity: 0.42,
+            });
+          },
+          mouseout: (e) => {
+            geoLayer.resetStyle(e.target);
+          },
+          click: () => {
+            if (typeof onSelectById === "function" && props.id_postg) {
+              onSelectById(props.id_postg);
+            }
+          },
+        });
+      },
+    }
+  );
+
+  geoLayer.addTo(poligonosLayer);
+}
+
+export function setPoligonosVisible(visible) {
+  if (!mapInstance || !poligonosLayer) return;
+  if (visible) {
+    if (!mapInstance.hasLayer(poligonosLayer)) {
+      mapInstance.addLayer(poligonosLayer);
+    }
+  } else if (mapInstance.hasLayer(poligonosLayer)) {
+    mapInstance.removeLayer(poligonosLayer);
   }
 }
 
