@@ -1,0 +1,734 @@
+{
+  "crs": {
+    "type": "name", 
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  }, 
+  "type": "FeatureCollection", 
+  "name": "postgrados_uagrm_web", 
+  "features": [
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -63.18183, 
+          -17.79277
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 480728.615, 
+        "url_foto": "assets/fotos/PG-00.jpg", 
+        "lat_wgs84": -17.79277, 
+        "correo": "posgrado@uagrm.edu.bo", 
+        "horario": "L-V 08:30-15:30", 
+        "dist_via_m": 4.09, 
+        "campus": "Zona Central", 
+        "direccion": "Av. Irala N° 565, 5to piso", 
+        "tipo_ent": "Rectorado_DGP", 
+        "telefono": "3-3342899", 
+        "area_m2": 0.0, 
+        "nom_facult": "Rectorado / Dirección General de Posgrado", 
+        "programas": "Doctorados, Maestrías Institucionales, Diplomados en Educación Superior", 
+        "cod_fac": "DGP", 
+        "utm_y_20s": 8032731.992, 
+        "modulo_pab": "Edif. Museo Noel Kempff 5to piso / Pab. 126 Aula 4", 
+        "sitio_web": "https://posgrado.uagrm.edu.bo", 
+        "ambito": "Urbano", 
+        "municipio": "Santa Cruz de la Sierra", 
+        "lat_ruta": -17.7928054, 
+        "cod_qr": "UAGRM-PG-DGP", 
+        "lon_wgs84": -63.18183, 
+        "estado_geo": "Verificado", 
+        "lon_ruta": -63.181819, 
+        "id_postg": "PG-00", 
+        "nom_unidad": "Escuela de Postgrado UAGRM (Dirección General de Posgrado)"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -63.52794, 
+          -20.03331
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 444785.74, 
+        "url_foto": "assets/fotos/PG-01.jpg", 
+        "lat_wgs84": -20.03331, 
+        "correo": "postgradofich@uagrm.edu.bo", 
+        "horario": "S/D", 
+        "dist_via_m": 0.0, 
+        "campus": "Sede Provincial", 
+        "direccion": "Av. Humberto Suárez Roca", 
+        "tipo_ent": "Sede_Provincial", 
+        "telefono": "3-9522979", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad Integral del Chaco", 
+        "programas": "Maestrías en Desarrollo Regional, Diplomados Petroleros y Ambientales", 
+        "cod_fac": "FICH", 
+        "utm_y_20s": 7784745.457, 
+        "modulo_pab": "Sede FICH", 
+        "sitio_web": "https://fich.uagrm.edu.bo", 
+        "ambito": "Provincial", 
+        "municipio": "Camiri", 
+        "lat_ruta": -20.03331, 
+        "cod_qr": "UAGRM-PG-FICH", 
+        "lon_wgs84": -63.52794, 
+        "estado_geo": "Verificado", 
+        "lon_ruta": -63.52794, 
+        "id_postg": "PG-01", 
+        "nom_unidad": "Unidad de Postgrado FICH"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -63.26956, 
+          -17.33831
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 471359.051, 
+        "url_foto": "assets/fotos/PG-02.jpg", 
+        "lat_wgs84": -17.33831, 
+        "correo": "postgradofinor@uagrm.edu.bo", 
+        "horario": "L-V 08:00-15:00", 
+        "dist_via_m": 0.0, 
+        "campus": "Sede Provincial", 
+        "direccion": "Barrio Urkupiña, Av. Circunvalación Noroeste", 
+        "tipo_ent": "Sede_Provincial", 
+        "telefono": "3-9227259", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad Integral del Norte", 
+        "programas": "Diplomados Agroindustriales, Maestrías en Gestión Productiva", 
+        "cod_fac": "FINOR", 
+        "utm_y_20s": 8082998.721, 
+        "modulo_pab": "Sede FINOR", 
+        "sitio_web": "https://finor.uagrm.edu.bo", 
+        "ambito": "Provincial", 
+        "municipio": "Montero", 
+        "lat_ruta": -17.33831, 
+        "cod_qr": "UAGRM-PG-FINOR", 
+        "lon_wgs84": -63.26956, 
+        "estado_geo": "Verificado", 
+        "lon_ruta": -63.26956, 
+        "id_postg": "PG-02", 
+        "nom_unidad": "Unidad de Postgrado FINOR"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -63.1932, 
+          -17.7785
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 479521.927, 
+        "url_foto": "assets/fotos/PG-03.jpg", 
+        "lat_wgs84": -17.7785, 
+        "correo": "postgradocontaduria@uagrm.edu.bo", 
+        "horario": "L 08:00-18:30 / Ma-V 08:30-18:30", 
+        "dist_via_m": 30.61, 
+        "campus": "Campus Universitario", 
+        "direccion": "Av. Centenario entre 1er y 2do anillo", 
+        "tipo_ent": "Unidad_Facultativa", 
+        "telefono": "S/D", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad de Ciencias Contables, Auditoría, Sistemas de Control de Gestión y Finanzas", 
+        "programas": "Maestrías en Auditoría, Finanzas Corporativas y Gestión Tributaria", 
+        "cod_fac": "FCCASCGF", 
+        "utm_y_20s": 8034309.537, 
+        "modulo_pab": "Campus Universitario", 
+        "sitio_web": "https://contaduria.uagrm.edu.bo", 
+        "ambito": "Urbano", 
+        "municipio": "Santa Cruz de la Sierra", 
+        "lat_ruta": -17.7783086, 
+        "cod_qr": "UAGRM-PG-FCCASCGF", 
+        "lon_wgs84": -63.1932, 
+        "estado_geo": "Revisar_Campo", 
+        "lon_ruta": -63.1929914, 
+        "id_postg": "PG-03", 
+        "nom_unidad": "Unidad de Postgrado Ciencias Contables"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -63.19206, 
+          -17.77006
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 479641.805, 
+        "url_foto": "assets/fotos/PG-04.jpg", 
+        "lat_wgs84": -17.77006, 
+        "correo": "postgradohabitat@uagrm.edu.bo", 
+        "horario": "S/D", 
+        "dist_via_m": 4.04, 
+        "campus": "Externo", 
+        "direccion": "Av. San Martín N° 146", 
+        "tipo_ent": "Unidad_Facultativa", 
+        "telefono": "3-3364664", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad de Ciencias del Hábitat, Diseño y Arte", 
+        "programas": "Maestrías en Arquitectura y Urbanismo, Diplomados en Diseño Sostenible", 
+        "cod_fac": "FCHDA", 
+        "utm_y_20s": 8035243.412, 
+        "modulo_pab": "Edificio FCHDA 1er Piso", 
+        "sitio_web": "https://habitat.uagrm.edu.bo", 
+        "ambito": "Urbano", 
+        "municipio": "Santa Cruz de la Sierra", 
+        "lat_ruta": -17.7700711, 
+        "cod_qr": "UAGRM-PG-FCHDA", 
+        "lon_wgs84": -63.19206, 
+        "estado_geo": "Revisar_Campo", 
+        "lon_ruta": -63.1920237, 
+        "id_postg": "PG-04", 
+        "nom_unidad": "Unidad de Postgrado FCHDA"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -63.1905, 
+          -17.7779
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 479808.045, 
+        "url_foto": "assets/fotos/PG-05.jpg", 
+        "lat_wgs84": -17.7779, 
+        "correo": "postgradohumanidades@uagrm.edu.bo", 
+        "horario": "L-V 08:00-15:00", 
+        "dist_via_m": 0.73, 
+        "campus": "Campus Universitario", 
+        "direccion": "Calle México esq. Calle Venezuela", 
+        "tipo_ent": "Unidad_Facultativa", 
+        "telefono": "61538808", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad de Humanidades", 
+        "programas": "Maestrías en Educación Superior, Diplomados en Lingüística y Psicología", 
+        "cod_fac": "FH", 
+        "utm_y_20s": 8034376.21, 
+        "modulo_pab": "Campus Universitario", 
+        "sitio_web": "https://humanidades.uagrm.edu.bo", 
+        "ambito": "Urbano", 
+        "municipio": "Santa Cruz de la Sierra", 
+        "lat_ruta": -17.7779048, 
+        "cod_qr": "UAGRM-PG-FH", 
+        "lon_wgs84": -63.1905, 
+        "estado_geo": "Revisar_Campo", 
+        "lon_ruta": -63.1905047, 
+        "id_postg": "PG-05", 
+        "nom_unidad": "Unidad de Postgrado Humanidades"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -63.1782, 
+          -17.7834
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 481112.359, 
+        "url_foto": "assets/fotos/PG-06.jpg", 
+        "lat_wgs84": -17.7834, 
+        "correo": "postgradosalud@uagrm.edu.bo", 
+        "horario": "L-V 08:30-15:30", 
+        "dist_via_m": 0.0, 
+        "campus": "Zona Central", 
+        "direccion": "Calle Bolívar N° 228", 
+        "tipo_ent": "Unidad_Facultativa", 
+        "telefono": "3-3395008", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad de Ciencias de la Salud Humana", 
+        "programas": "Especialidades Médicas, Maestrías en Salud Pública y Epidemiología", 
+        "cod_fac": "FCSH", 
+        "utm_y_20s": 8033769.003, 
+        "modulo_pab": "Edificio Salud", 
+        "sitio_web": "https://salud.uagrm.edu.bo", 
+        "ambito": "Urbano", 
+        "municipio": "Santa Cruz de la Sierra", 
+        "lat_ruta": -17.7834, 
+        "cod_qr": "UAGRM-PG-FCSH", 
+        "lon_wgs84": -63.1782, 
+        "estado_geo": "Revisar_Campo", 
+        "lon_ruta": -63.1782, 
+        "id_postg": "PG-06", 
+        "nom_unidad": "Unidad de Postgrado en Salud UAGRM"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -63.19294, 
+          -17.77919
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 479549.564, 
+        "url_foto": "assets/fotos/PG-07.jpg", 
+        "lat_wgs84": -17.77919, 
+        "correo": "postgradojuridicas@uagrm.edu.bo", 
+        "horario": "S/D", 
+        "dist_via_m": 63.53, 
+        "campus": "Campus Universitario", 
+        "direccion": "Av. Centenario / Av. Hernando Sanabria casi 2do anillo", 
+        "tipo_ent": "Unidad_Facultativa", 
+        "telefono": "76895500", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad de Ciencias Jurídicas, Políticas, Sociales y Relaciones Internacionales", 
+        "programas": "Maestrías en Derecho Constitucional, Penal, Corporativo y RRII", 
+        "cod_fac": "FCJPSRI", 
+        "utm_y_20s": 8034233.228, 
+        "modulo_pab": "Campus Universitario", 
+        "sitio_web": "https://juridicas.uagrm.edu.bo", 
+        "ambito": "Urbano", 
+        "municipio": "Santa Cruz de la Sierra", 
+        "lat_ruta": -17.7787928, 
+        "cod_qr": "UAGRM-PG-FCJPSRI", 
+        "lon_wgs84": -63.19294, 
+        "estado_geo": "Verificado", 
+        "lon_ruta": -63.1925072, 
+        "id_postg": "PG-07", 
+        "nom_unidad": "Unidad de Posgrado FCJPSRRII"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -63.17894, 
+          -17.79031
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 481034.654, 
+        "url_foto": "assets/fotos/PG-08.jpg", 
+        "lat_wgs84": -17.79031, 
+        "correo": "contacto@uagrmbs.edu.bo", 
+        "horario": "L-V 08:30-15:30", 
+        "dist_via_m": 1.22, 
+        "campus": "Zona Central", 
+        "direccion": "Calle Gral. Agustín Saavedra N° 137 esq. Chuquisaca", 
+        "tipo_ent": "Unidad_Facultativa", 
+        "telefono": "3-3366814", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad de Ciencias Económicas y Empresariales", 
+        "programas": "Maestrías Ejecutivas, MBA Internacional, Diplomados en Marketing y Finanzas", 
+        "cod_fac": "FCEE", 
+        "utm_y_20s": 8033004.447, 
+        "modulo_pab": "Edificio Propio", 
+        "sitio_web": "https://www.uagrmbs.edu.bo", 
+        "ambito": "Urbano", 
+        "municipio": "Santa Cruz de la Sierra", 
+        "lat_ruta": -17.7903195, 
+        "cod_qr": "UAGRM-PG-FCEE", 
+        "lon_wgs84": -63.17894, 
+        "estado_geo": "Verificado", 
+        "lon_ruta": -63.1789341, 
+        "id_postg": "PG-08", 
+        "nom_unidad": "UAGRM Business School"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -63.19581, 
+          -17.77706
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 479245.115, 
+        "url_foto": "assets/fotos/PG-09.jpg", 
+        "lat_wgs84": -17.77706, 
+        "correo": "postgradofvc@uagrm.edu.bo", 
+        "horario": "S/D", 
+        "dist_via_m": 61.04, 
+        "campus": "Ciudad Universitaria", 
+        "direccion": "Av. 26 de Febrero entre Av. Busch y Centenario", 
+        "tipo_ent": "Unidad_Facultativa", 
+        "telefono": "62217301", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad de Ciencias Veterinarias", 
+        "programas": "Especialidades en Cirugía Veterinaria, Maestrías en Sanidad Animal y Zootecnia", 
+        "cod_fac": "FCV", 
+        "utm_y_20s": 8034468.563, 
+        "modulo_pab": "Módulo 247", 
+        "sitio_web": "https://veterinaria.uagrm.edu.bo", 
+        "ambito": "Urbano", 
+        "municipio": "Santa Cruz de la Sierra", 
+        "lat_ruta": -17.776763, 
+        "cod_qr": "UAGRM-PG-FCV", 
+        "lon_wgs84": -63.19581, 
+        "estado_geo": "Verificado", 
+        "lon_ruta": -63.1953247, 
+        "id_postg": "PG-09", 
+        "nom_unidad": "Unidad de Postgrado Veterinaria"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -63.16669, 
+          -17.77356
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 482331.354, 
+        "url_foto": "assets/fotos/PG-10.jpg", 
+        "lat_wgs84": -17.77356, 
+        "correo": "postgradoagricolas@uagrm.edu.bo", 
+        "horario": "S/D", 
+        "dist_via_m": 4.55, 
+        "campus": "Externo", 
+        "direccion": "Av. Cristóbal de Mendoza N° 900 (2do anillo)", 
+        "tipo_ent": "Unidad_Facultativa", 
+        "telefono": "63437106 / 77635020", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad de Ciencias Agrícolas", 
+        "programas": "Maestrías en Agricultura de Precisión, Gestión de Cuencas y Riego", 
+        "cod_fac": "FCA", 
+        "utm_y_20s": 8034858.763, 
+        "modulo_pab": "Edificio UPCA-FCA", 
+        "sitio_web": "https://agricolas.uagrm.edu.bo", 
+        "ambito": "Urbano", 
+        "municipio": "Santa Cruz de la Sierra", 
+        "lat_ruta": -17.7736, 
+        "cod_qr": "UAGRM-PG-FCA", 
+        "lon_wgs84": -63.16669, 
+        "estado_geo": "Verificado", 
+        "lon_ruta": -63.1667, 
+        "id_postg": "PG-10", 
+        "nom_unidad": "Unidad de Postgrado Ciencias Agrícolas (UPCA)"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -63.19044, 
+          -17.77794
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 479814.409, 
+        "url_foto": "assets/fotos/PG-11.jpg", 
+        "lat_wgs84": -17.77794, 
+        "correo": "info@ei-uagrm.edu.bo", 
+        "horario": "L-V 08:00-18:30", 
+        "dist_via_m": 1.9, 
+        "campus": "Campus Universitario", 
+        "direccion": "Calle México esq. Venezuela (y Av. Busch Módulo 290)", 
+        "tipo_ent": "Unidad_Facultativa", 
+        "telefono": "60008313", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad de Ciencias Exactas y Tecnología", 
+        "programas": "Maestrías en Ingeniería de Procesos, Petróleo y Gas, Telecomunicaciones", 
+        "cod_fac": "FCET", 
+        "utm_y_20s": 8034371.791, 
+        "modulo_pab": "Sede 1 Campus / Sede 2 Módulo 290", 
+        "sitio_web": "https://ingenieria.uagrm.edu.bo", 
+        "ambito": "Urbano", 
+        "municipio": "Santa Cruz de la Sierra", 
+        "lat_ruta": -17.7779524, 
+        "cod_qr": "UAGRM-PG-FCET", 
+        "lon_wgs84": -63.19044, 
+        "estado_geo": "Verificado", 
+        "lon_ruta": -63.1904523, 
+        "id_postg": "PG-11", 
+        "nom_unidad": "UPCET / Escuela de Ingeniería"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -63.1945, 
+          -17.7752
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 479383.756, 
+        "url_foto": "assets/fotos/PG-12.jpg", 
+        "lat_wgs84": -17.7752, 
+        "correo": "info@upfp.edu.bo", 
+        "horario": "L-V 08:00-12:00 y 15:00-19:00", 
+        "dist_via_m": 37.02, 
+        "campus": "Ciudad Universitaria", 
+        "direccion": "Av. Busch 2do anillo, Ciudad Universitaria", 
+        "tipo_ent": "Unidad_Facultativa", 
+        "telefono": "63339696", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad Politécnica", 
+        "programas": "Diplomados Técnicos en Automatización, Mantenimiento Industrial y Redes", 
+        "cod_fac": "FP", 
+        "utm_y_20s": 8034674.487, 
+        "modulo_pab": "Módulo 212, 4to piso", 
+        "sitio_web": "https://politecnica.uagrm.edu.bo", 
+        "ambito": "Urbano", 
+        "municipio": "Santa Cruz de la Sierra", 
+        "lat_ruta": -17.7754035, 
+        "cod_qr": "UAGRM-PG-FP", 
+        "lon_wgs84": -63.1945, 
+        "estado_geo": "Revisar_Campo", 
+        "lon_ruta": -63.1947772, 
+        "id_postg": "PG-12", 
+        "nom_unidad": "Escuela Superior Politécnica (UPFP)"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -63.8849, 
+          -17.4025
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 406008.664, 
+        "url_foto": "assets/fotos/PG-13.jpg", 
+        "lat_wgs84": -17.4025, 
+        "correo": "postgradofini@uagrm.edu.bo", 
+        "horario": "L-V 08:30-15:30", 
+        "dist_via_m": 0.0, 
+        "campus": "Sede Provincial", 
+        "direccion": "Barrio 12 de Octubre, Av. Santa Cruz s/n", 
+        "tipo_ent": "Sede_Provincial", 
+        "telefono": "69010491", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad Integral de Ichilo", 
+        "programas": "Diplomados en Desarrollo Agropecuario, Maestrías en Gestión Sostenible", 
+        "cod_fac": "FINI", 
+        "utm_y_20s": 8075700.429, 
+        "modulo_pab": "Sede FINI", 
+        "sitio_web": "https://fini.uagrm.edu.bo", 
+        "ambito": "Provincial", 
+        "municipio": "Yapacaní", 
+        "lat_ruta": -17.4025, 
+        "cod_qr": "UAGRM-PG-FINI", 
+        "lon_wgs84": -63.8849, 
+        "estado_geo": "Revisar_Campo", 
+        "lon_ruta": -63.8849, 
+        "id_postg": "PG-13", 
+        "nom_unidad": "Unidad de Postgrado FINI"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -60.96744, 
+          -16.38444
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 717084.653, 
+        "url_foto": "assets/fotos/PG-14.jpg", 
+        "lat_wgs84": -16.38444, 
+        "correo": "f_integralchiquitana@uagrm.edu.bo", 
+        "horario": "S/D", 
+        "dist_via_m": 0.0, 
+        "campus": "Sede Provincial", 
+        "direccion": "Calle Junín Final y Viador Moreno s/n", 
+        "tipo_ent": "Sede_Provincial", 
+        "telefono": "S/D", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad Integral Chiquitana", 
+        "programas": "Diplomados en Recursos Naturales, Maestrías en Desarrollo Comunitario", 
+        "cod_fac": "FAICHI", 
+        "utm_y_20s": 8187452.762, 
+        "modulo_pab": "Sede FAICHI", 
+        "sitio_web": "https://faichi.uagrm.edu.bo", 
+        "ambito": "Provincial", 
+        "municipio": "San Ignacio de Velasco", 
+        "lat_ruta": -16.38444, 
+        "cod_qr": "UAGRM-PG-FAICHI", 
+        "lon_wgs84": -60.96744, 
+        "estado_geo": "Verificado", 
+        "lon_ruta": -60.96744, 
+        "id_postg": "PG-14", 
+        "nom_unidad": "Unidad de Postgrado FAICHI"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -63.19094, 
+          -17.77669
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 479761.271, 
+        "url_foto": "assets/fotos/PG-15.jpg", 
+        "lat_wgs84": -17.77669, 
+        "correo": "posgradobiofar@hotmail.com", 
+        "horario": "S/D", 
+        "dist_via_m": 65.74, 
+        "campus": "Ciudad Universitaria", 
+        "direccion": "Av. Busch entre 2do y 3er anillo", 
+        "tipo_ent": "Unidad_Facultativa", 
+        "telefono": "3-3366270", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad de Ciencias Farmacéuticas y Bioquímicas", 
+        "programas": "Diplomados en Análisis Clínicos, Maestrías en Toxicología y Bioquímica", 
+        "cod_fac": "FCFB", 
+        "utm_y_20s": 8034510.03, 
+        "modulo_pab": "Módulo 280", 
+        "sitio_web": "https://biofar.uagrm.edu.bo", 
+        "ambito": "Urbano", 
+        "municipio": "Santa Cruz de la Sierra", 
+        "lat_ruta": -17.777121, 
+        "cod_qr": "UAGRM-PG-FCFB", 
+        "lon_wgs84": -63.19094, 
+        "estado_geo": "Verificado", 
+        "lon_ruta": -63.1913669, 
+        "id_postg": "PG-15", 
+        "nom_unidad": "Unidad de Posgrado Farmacia y Bioquímica"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -63.19506, 
+          -17.77631
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 479324.525, 
+        "url_foto": "assets/fotos/PG-16.jpg", 
+        "lat_wgs84": -17.77631, 
+        "correo": "postgradoficct@uagrm.edu.bo", 
+        "horario": "L-V 09:00-16:00", 
+        "dist_via_m": 9.87, 
+        "campus": "Ciudad Universitaria", 
+        "direccion": "Av. Busch, Ciudad Universitaria", 
+        "tipo_ent": "Unidad_Facultativa", 
+        "telefono": "73600888 / 3-3553636", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad de Ingeniería en Ciencias de la Computación y Telecomunicaciones", 
+        "programas": "Maestrías en Ciberseguridad, Ciencia de Datos, Software y Redes", 
+        "cod_fac": "FICCT", 
+        "utm_y_20s": 8034551.622, 
+        "modulo_pab": "Módulo 232 / Módulo 236", 
+        "sitio_web": "https://ficct.uagrm.edu.bo", 
+        "ambito": "Urbano", 
+        "municipio": "Santa Cruz de la Sierra", 
+        "lat_ruta": -17.776252, 
+        "cod_qr": "UAGRM-PG-FICCT", 
+        "lon_wgs84": -63.19506, 
+        "estado_geo": "Verificado", 
+        "lon_ruta": -63.1949893, 
+        "id_postg": "PG-16", 
+        "nom_unidad": "UAGRM School of Engineering (SOE)"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -64.10094, 
+          -18.48631
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 383769.503, 
+        "url_foto": "assets/fotos/PG-17.jpg", 
+        "lat_wgs84": -18.48631, 
+        "correo": "postgradofivc@uagrm.edu.bo", 
+        "horario": "L-V 07:00-18:00", 
+        "dist_via_m": 0.0, 
+        "campus": "Sede Provincial", 
+        "direccion": "Av. Tecnológico y Av. Ejército", 
+        "tipo_ent": "Sede_Provincial", 
+        "telefono": "3-9422317", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad Integral de los Valles Cruceños", 
+        "programas": "Diplomados en Agroecología, Maestrías en Desarrollo Rural y Gestión Hídrica", 
+        "cod_fac": "FIVC", 
+        "utm_y_20s": 7955655.541, 
+        "modulo_pab": "Sede FIVC", 
+        "sitio_web": "https://fivc.uagrm.edu.bo", 
+        "ambito": "Provincial", 
+        "municipio": "Vallegrande", 
+        "lat_ruta": -18.48631, 
+        "cod_qr": "UAGRM-PG-FIVC", 
+        "lon_wgs84": -64.10094, 
+        "estado_geo": "Verificado", 
+        "lon_ruta": -64.10094, 
+        "id_postg": "PG-17", 
+        "nom_unidad": "Unidad de Postgrado FIVC"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Point", 
+        "coordinates": [
+          -62.6168, 
+          -16.9065
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "utm_x_20s": 540809.474, 
+        "url_foto": "assets/fotos/PG-18.jpg", 
+        "lat_wgs84": -16.9065, 
+        "correo": "postgradofine@uagrm.edu.bo", 
+        "horario": "S/D", 
+        "dist_via_m": 0.0, 
+        "campus": "Sede Provincial", 
+        "direccion": "Barrio 6 de Agosto, Av. Marcelo Quiroga", 
+        "tipo_ent": "Sede_Provincial", 
+        "telefono": "3-9658002", 
+        "area_m2": 0.0, 
+        "nom_facult": "Facultad Integral del Nor-Este", 
+        "programas": "Diplomados en Producción Agrícola Sostenible y Gestión Educativa", 
+        "cod_fac": "FINE", 
+        "utm_y_20s": 8130748.666, 
+        "modulo_pab": "Sede FINE", 
+        "sitio_web": "https://fine.uagrm.edu.bo", 
+        "ambito": "Provincial", 
+        "municipio": "San Julián", 
+        "lat_ruta": -16.9065, 
+        "cod_qr": "UAGRM-PG-FINE", 
+        "lon_wgs84": -62.6168, 
+        "estado_geo": "Revisar_Campo", 
+        "lon_ruta": -62.6168, 
+        "id_postg": "PG-18", 
+        "nom_unidad": "Unidad de Postgrado FINE"
+      }
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+# Entornos virtuales y dependencias
+.env
+.env.local
+__pycache__/
+*.pyc
+*.pyo
+venv/
+env/
+.venv/
+
+# ArcGIS / Binarios temporales
+*.gdb.lock
+*.lock
+*.tmp
+
+# Logs y SO
+*.log
+.DS_Store
+Thumbs.db
+
+# Datos cartograficos base pesados (exceden limite de GitHub)
+SIG/

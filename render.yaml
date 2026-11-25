@@ -1,0 +1,19 @@
+# ==============================================================================
+# BLUEPRINT DE DESPLIEGUE EN RENDER: BACKEND FASTAPI SIG POSTGRADOS UAGRM
+# ==============================================================================
+services:
+  - type: web
+    name: sig-postgrados-uagrm-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    region: ohio
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: DATABASE_URL
+        sync: false
