@@ -328,9 +328,11 @@ En esta fase final se construyó la aplicación web espacial **zero-build** en l
      - `PYTHON_VERSION`: `3.12.8`
 
 4. **Validación Post-Despliegue:**
-   - URL en producción (Render): `https://postgrados-gis.onrender.com`
-   - Documentación Swagger UI: `https://postgrados-gis.onrender.com/docs`
-   - Health check: `https://postgrados-gis.onrender.com/api/health` (`status: ok`, `database: connected`).
+   - **Backend en Producción (Render):** `https://postgrados-gis.onrender.com`
+   - **Documentación Swagger UI:** `https://postgrados-gis.onrender.com/docs`
+   - **Health Check:** `https://postgrados-gis.onrender.com/api/health` (`status: ok`, `database: connected`).
+   - **Frontend WebGIS en Producción (Cloudflare Pages):** `https://postgrados-gis.pages.dev/`
+   - **Ejemplo Deep-Link QR Móvil:** `https://postgrados-gis.pages.dev/?qr=UAGRM-PG-FICCT`
 
 ---
 
@@ -339,9 +341,9 @@ En esta fase final se construyó la aplicación web espacial **zero-build** en l
 - [x] **1. Verificar Backend en Render (`/api/health` -> 200):** Verificado en producción (`https://postgrados-gis.onrender.com/api/health` → HTTP `200`, `status: ok`, `database: connected`, PostGIS `3.3`, `19` postgrados y `12` servicios).
 - [x] **2. Configurar URL de Producción en el Frontend:** Constante `PRODUCTION_API_URL` actualizada en [frontend/js/config.js](frontend/js/config.js) apuntando a `https://postgrados-gis.onrender.com`.
 - [x] **3. Subir Cambios a GitHub:** Cambios de configuración y bitácora subidos a `main` para habilitar despliegue automático en Cloudflare Pages.
-- [ ] **4. Crear Proyecto en Cloudflare Pages:** Conectar el repositorio con *Framework preset:* `None`, *Build command:* vacío y *Build output directory:* `frontend`.
-- [ ] **5. Probar Deep-Link QR y GPS en Móvil (HTTPS):** Abrir `https://<tu-proyecto>.pages.dev/?qr=UAGRM-PG-FICCT`, validar carga automática de ficha, escáner de cámara y cálculo de ruta con servicios cercanos PostGIS.
-- [ ] **6. (Opcional) Endurecer CORS en Render:** Actualizar `CORS_ORIGINS` en Render con el dominio asignado por Cloudflare Pages (`https://<tu-proyecto>.pages.dev`).
+- [x] **4. Crear Proyecto en Cloudflare Pages:** Desplegado en vivo en `https://postgrados-gis.pages.dev/` (*Framework preset:* `None`, *Build command:* vacío, *Build output directory:* `frontend`).
+- [ ] **5. Probar Deep-Link QR y GPS en Móvil (HTTPS):** Abrir `https://postgrados-gis.pages.dev/?qr=UAGRM-PG-FICCT`, validar carga automática de ficha, escáner de cámara y cálculo de ruta con servicios cercanos PostGIS.
+- [ ] **6. (Opcional) Endurecer CORS en Render:** Actualizar `CORS_ORIGINS` en Render con el dominio asignado por Cloudflare Pages (`https://postgrados-gis.pages.dev`).
 - [ ] **7. (Opcional) Cargar Fotografías Reales:** Guardar las fotos en `frontend/assets/fotos/PG-00.jpg` ... `PG-18.jpg` para reemplazar el respaldo SVG automático.
 
 ---
